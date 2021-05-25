@@ -1,5 +1,5 @@
 CODE Programme
-INTEGER Lynda,Amine;
+INTEGER L,A;
 CONST Dounia:=20;
 START
 END.
