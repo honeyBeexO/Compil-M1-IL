@@ -116,27 +116,9 @@ Constante:MC_CONST {strcpy(isConst,"oui");} MC_IDF MC_AFFECT Value MC_SEMI
 
 
 
-
-list_idf: MC_IDF
-{
-      if(DoubleDeclaration($1) == 1){
-        insererType($1,type);
-        setConstant($1,isConst);
-      }else{
-          printf("IDF [%s] at line [%d] not declared\n",$1,linenum);
-      }
-}
-        |  MC_IDF MC_COMMA list_idf
-{
-                  //check for double declaration
-                  if(DoubleDeclaration($1) == 1) {
-                      insererType($1,type);
-                      setConstant($1,isConst);
-
-                  }else{
-                        printf("IDF [%s] at line [%d] not declared\n",$1,linenum);
-                  }
-            }
+/* check for double declaration and insererType */
+list_idf: MC_IDF {}
+        |  MC_IDF MC_COMMA list_idf{}
 ;
 
 Type: MC_INTEGER        { type = 0; }
