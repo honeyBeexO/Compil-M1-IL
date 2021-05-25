@@ -620,10 +620,10 @@ static const yytype_int16 yyrline[] =
 {
        0,   100,   100,   106,   107,   108,   111,   111,   114,   114,
      120,   121,   124,   125,   126,   127,   132,   133,   134,   135,
-     144,   169,   169,   178,   217,   244,   247,   284,   321,   323,
-     339,   341,   352,   367,   380,   393,   419,   420,   421,   422,
-     423,   424,   428,   466,   487,   499,   506,   515,   530,   545,
-     550
+     139,   141,   141,   143,   144,   145,   148,   149,   150,   153,
+     169,   171,   182,   197,   210,   223,   249,   250,   251,   252,
+     253,   254,   258,   296,   317,   329,   336,   345,   360,   375,
+     380
 };
 #endif
 
@@ -1333,215 +1333,14 @@ yyreduce:
 #line 1334 "syntax.tab.c"
     break;
 
-  case 20: /* Affectation: BBB Expression MC_SEMI  */
-#line 144 "syntax.y"
-                                   {
-
-      /*--------- l'affectation est de type PartieGauche := PartieDroite 
-      * la partie gauche je peux l'obtenir a partire de la pile elle sera en 
-      * sommet de la pile elle peut etre : IDF | Constant | temporaire
-      * et la partie droite je vais l'avoir a partir ma grammair de mon IDF
-      */
-                                                                                 // |   |
-     pDroiteAffect = depiler(&p);   //----- c'est la partie droite de l'affectation |___|
-
-      cp = depiler(&compatible);
-      compatibilitePdroite = atoi(cp); //--- c'est le type de resultat de la partie droite de l'expression
-      
-if(affect_compatibl(compatibilitePgauche,compatibilitePdroite) == 0){ 
-      printf("[line:%d]\tIncompatibilite ICI \t[%s] de type [%d]\t[%s] de type [%d]\n",linenum,pGaucheAffect,compatibilitePgauche,pDroiteAffect,compatibilitePdroite);
-}
-
-      insererQUADR(":=",pGaucheAffect,"",pDroiteAffect);
-      initializerVar(&pDroiteAffect,&pGaucheAffect);
-
-      compatibilite = -1;
-      cp = "";
-      strcpy(ToString,"");
-}
-#line 1363 "syntax.tab.c"
-    break;
-
   case 21: /* $@3: %empty  */
-#line 169 "syntax.y"
+#line 141 "syntax.y"
            {compatibilite = getType((yyvsp[0].str));}
-#line 1369 "syntax.tab.c"
-    break;
-
-  case 22: /* BBB: MC_IDF $@3 MC_AFFECT  */
-#line 169 "syntax.y"
-                                                    {
-
-        if(NotDeclared((yyvsp[-2].str)) == 0) 
-            printf("[%s] IDF NON DECLARE\t line : [%d] \n",(yyvsp[-2].str),linenum);
-
-        compatibilitePgauche = compatibilite;//getType($1);
-        pGaucheAffect = (yyvsp[-2].str);
-
-}
-#line 1383 "syntax.tab.c"
-    break;
-
-  case 23: /* Expression: Expression MC_ADD T  */
-#line 179 "syntax.y"
-{     
-    operator = ' '; 
-    if(taillePile(&p)>=2){
-
-         while(taillePile(&p) >= 2){
-
-            temporaryName = createName("t",i);
-            i++;
-
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-     
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-            
-
-
-            insererQUADR((yyvsp[-1].str),op1,op2,temporaryName);
-      
-            initializerVar(&op1,&op2);
-            initializeEntier(&typeOP1,&typeOP2);
-
-            if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);}
-
-          }  
-            empiler(&p,temporaryName);
-            empiler(&compatible,ToString);
-}
-             strcpy(ToString,"");
-             compatibilite = -1;
-             cp ="";
-      //le else : on sera dans le cas d'une affectation donc pas besoin d'empiler tous est deja dans la pile
-}
-#line 1426 "syntax.tab.c"
-    break;
-
-  case 24: /* Expression: Expression MC_SUB T  */
-#line 218 "syntax.y"
-{
-  operator = ' '; 
-
-  if(taillePile(&p)>=2){
-       while(taillePile(&p) >= 2){
-            temporaryName = createName("t",i);
-            i++;
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-            insererQUADR((yyvsp[-1].str),op1,op2,temporaryName);
-             if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);
-            }
-       }
-    empiler(&p,temporaryName);
-    empiler(&compatible,ToString);
-}
-    strcpy(ToString,"");
-    compatibilite = -1;
-    cp ="";      /*le else on sera dans le cas d'une affectation donc pas besoin d'empiler*/
-}
-#line 1457 "syntax.tab.c"
-    break;
-
-  case 26: /* T: T MC_MUL F  */
-#line 247 "syntax.y"
-             {
-      operator = ' ';
-
-    if(taillePile(&p)>=2){
-      
-      while(taillePile(&p) >= 2){
-
-            temporaryName = createName("t",i);
-            i++;
-            
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-
-            insererQUADR((yyvsp[-1].str),op1,op2,temporaryName);
-            initializerVar(&op1,&op2);
-
-             if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);}
-     }
-      empiler(&p,temporaryName);
-      empiler(&compatible,ToString);/* j'empile cp car si op1 est compatible avec op2 donc j'empile le resltas*/
-}/*else tous est deja dans la pile : 
-      empiler(&p,ToString);
-      empiler(&compatible,ToString);
-      */
-      strcpy(ToString,"");
-      compatibilite = -1;
-      cp ="";
-
-}
-#line 1499 "syntax.tab.c"
-    break;
-
-  case 27: /* T: T MC_DIV F  */
-#line 284 "syntax.y"
-            { 
-      operator = '/'; 
-if(taillePile(&p)>=2){
-
-       while(taillePile(&p) >= 2){
-            temporaryName = createName("t",i);
-            i++;
-
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-            
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp); /*---- convertire le type de int vers string -----*/
-
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-
-      //if divisonParZero aussi
-      if(divByZero(operator ,fv)) 
-            printf("DivByZero\t[%s] \tsure [%s] \n",op1,op2);
-
-            insererQUADR((yyvsp[-1].str),op1,op2,temporaryName);
-            //initializerVar(&op1,&op2);
-
-            if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);
-                  }
-     }
-            empiler(&p,temporaryName);
-            empiler(&compatible,ToString);
-}
-                        /*---- on initialize apres utilisation ------*/
-            compatibilite = -1;
-            cp ="";
-            operator = ' ';
-                  }
-#line 1541 "syntax.tab.c"
+#line 1340 "syntax.tab.c"
     break;
 
   case 29: /* F: MC_IDF  */
-#line 323 "syntax.y"
+#line 153 "syntax.y"
          {
 
       if(NotDeclared((yyvsp[0].str)) == 1){
@@ -1558,24 +1357,24 @@ if(taillePile(&p)>=2){
 
       //sprintf(ToString,"%d",compatibilite);
 }
-#line 1562 "syntax.tab.c"
+#line 1361 "syntax.tab.c"
     break;
 
   case 30: /* F: Value  */
-#line 339 "syntax.y"
+#line 169 "syntax.y"
        {/* dans la garmmaire de valeur ====> */
 }
-#line 1569 "syntax.tab.c"
+#line 1368 "syntax.tab.c"
     break;
 
   case 31: /* F: L_PAREN Expression R_PAREN  */
-#line 341 "syntax.y"
+#line 171 "syntax.y"
                             {}
-#line 1575 "syntax.tab.c"
+#line 1374 "syntax.tab.c"
     break;
 
   case 32: /* Value: INTEGER_CONST  */
-#line 353 "syntax.y"
+#line 183 "syntax.y"
 {  
 
       type_const = 0;
@@ -1590,11 +1389,11 @@ if(taillePile(&p)>=2){
 
       strcpy(ToString,"");
 }
-#line 1594 "syntax.tab.c"
+#line 1393 "syntax.tab.c"
     break;
 
   case 33: /* Value: REAL_CONST  */
-#line 368 "syntax.y"
+#line 198 "syntax.y"
 {    
     type_const = 1;
         fv = (yyvsp[0].real);
@@ -1607,11 +1406,11 @@ if(taillePile(&p)>=2){
 
       strcpy(ToString,"");
 }
-#line 1611 "syntax.tab.c"
+#line 1410 "syntax.tab.c"
     break;
 
   case 34: /* Value: STRING_CONST  */
-#line 381 "syntax.y"
+#line 211 "syntax.y"
 { 
 
       type_const = 2;   
@@ -1624,11 +1423,11 @@ if(taillePile(&p)>=2){
 
       strcpy(ToString,"");
 }
-#line 1628 "syntax.tab.c"
+#line 1427 "syntax.tab.c"
     break;
 
   case 35: /* Value: CHAR_CONST  */
-#line 394 "syntax.y"
+#line 224 "syntax.y"
 { 
 
       type_const = 3;   
@@ -1642,47 +1441,47 @@ if(taillePile(&p)>=2){
 
       strcpy(ToString,"");
 }
-#line 1646 "syntax.tab.c"
+#line 1445 "syntax.tab.c"
     break;
 
   case 36: /* OP_COND: MC_SUP_EQUAL  */
-#line 419 "syntax.y"
+#line 249 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1652 "syntax.tab.c"
+#line 1451 "syntax.tab.c"
     break;
 
   case 37: /* OP_COND: MC_INF_EQUAL  */
-#line 420 "syntax.y"
+#line 250 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1658 "syntax.tab.c"
+#line 1457 "syntax.tab.c"
     break;
 
   case 38: /* OP_COND: MC_STRICT_SUP  */
-#line 421 "syntax.y"
+#line 251 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1664 "syntax.tab.c"
+#line 1463 "syntax.tab.c"
     break;
 
   case 39: /* OP_COND: MC_STRICT_INF  */
-#line 422 "syntax.y"
+#line 252 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1670 "syntax.tab.c"
+#line 1469 "syntax.tab.c"
     break;
 
   case 40: /* OP_COND: MC_EQUAL  */
-#line 423 "syntax.y"
+#line 253 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1676 "syntax.tab.c"
+#line 1475 "syntax.tab.c"
     break;
 
   case 41: /* OP_COND: MC_NOT_EQUAL  */
-#line 424 "syntax.y"
+#line 254 "syntax.y"
                         {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1682 "syntax.tab.c"
+#line 1481 "syntax.tab.c"
     break;
 
   case 42: /* Condition: Expression OP_COND Expression  */
-#line 429 "syntax.y"
+#line 259 "syntax.y"
 {
 
       pGaucheCond= depiler(&p);
@@ -1702,11 +1501,11 @@ if(taillePile(&p)>=2){
      initializerVar(&pDroiteCond,&pGaucheCond);
      //quadCondNum = -1;
 }
-#line 1706 "syntax.tab.c"
+#line 1505 "syntax.tab.c"
     break;
 
   case 43: /* IF: B Condition R_PAREN  */
-#line 466 "syntax.y"
+#line 296 "syntax.y"
                       {//R3
 //toString contient la valeur de FinCondIF sous forme d'un string
 
@@ -1727,11 +1526,11 @@ if(taillePile(&p)>=2){
       strcpy(ToString,"");
     
 }
-#line 1731 "syntax.tab.c"
+#line 1530 "syntax.tab.c"
     break;
 
   case 44: /* B: C L_PAREN  */
-#line 487 "syntax.y"
+#line 317 "syntax.y"
             {//R2
       
       /*
@@ -1743,11 +1542,11 @@ if(taillePile(&p)>=2){
      ajour_quad(DebInstIF,1,ToString);
 
 }
-#line 1747 "syntax.tab.c"
+#line 1546 "syntax.tab.c"
     break;
 
   case 45: /* C: D Instruction MC_IF  */
-#line 499 "syntax.y"
+#line 329 "syntax.y"
                        {//R1
       
      /*----- pour executer les instructions qu'une seule fois ----*/
@@ -1755,21 +1554,21 @@ if(taillePile(&p)>=2){
      insererQUADR("BR","","","");
 
 }
-#line 1759 "syntax.tab.c"
+#line 1558 "syntax.tab.c"
     break;
 
   case 46: /* D: MC_EXECUTE  */
-#line 506 "syntax.y"
+#line 336 "syntax.y"
              {//R1
       /*----- aller a l'evaluation de la condition -----*/
       DebInstIF = qc;
       insererQUADR("BR","","","");
 }
-#line 1769 "syntax.tab.c"
+#line 1568 "syntax.tab.c"
     break;
 
   case 47: /* While: AA R_BRACE  */
-#line 515 "syntax.y"
+#line 345 "syntax.y"
                  {
 
        sprintf(ToString,"%d",DebCondWhile);
@@ -1784,11 +1583,11 @@ if(taillePile(&p)>=2){
       quadCondNum = -1;
       strcpy(OP_CON,"");
 }
-#line 1788 "syntax.tab.c"
+#line 1587 "syntax.tab.c"
     break;
 
   case 48: /* AA: BB R_PAREN MC_EXECUTE Instruction  */
-#line 530 "syntax.y"
+#line 360 "syntax.y"
                                      {
 
       //insertion de quad qui fait le branchement sur la condition de while debut de la condition
@@ -1802,27 +1601,27 @@ if(taillePile(&p)>=2){
       //ajour_quad(quadCondNum,1,ToString);
       //quadCondNum = -1;
 }
-#line 1806 "syntax.tab.c"
+#line 1605 "syntax.tab.c"
     break;
 
   case 49: /* BB: CC Condition  */
-#line 545 "syntax.y"
+#line 375 "syntax.y"
                 {
         FinCondWhile = qc;
 }
-#line 1814 "syntax.tab.c"
+#line 1613 "syntax.tab.c"
     break;
 
   case 50: /* CC: MC_WHILE L_PAREN  */
-#line 550 "syntax.y"
+#line 380 "syntax.y"
                     {
       DebCondWhile = qc;
 }
-#line 1822 "syntax.tab.c"
+#line 1621 "syntax.tab.c"
     break;
 
 
-#line 1826 "syntax.tab.c"
+#line 1625 "syntax.tab.c"
 
       default: break;
     }
@@ -2016,7 +1815,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 555 "syntax.y"
+#line 385 "syntax.y"
 
 
 void yyerror(char *s) {

@@ -135,191 +135,21 @@ Instruction :  Affectation Instruction {}
             | 
 ;
 
-      /*----------- Affectation : ----------------------------------------------
-      *le dernier nom de Expression sera dans ToString ? ou bien temporaryName ? 
-      *sinon on cree une autre variable ou bien utiliser une pile
-      * A:= A  | A:= 6 | A := A+6*B | t[i] := 4*P+t[i]
-      */
 
-Affectation: BBB Expression MC_SEMI{
-
-      /*--------- l'affectation est de type PartieGauche := PartieDroite 
-      * la partie gauche je peux l'obtenir a partire de la pile elle sera en 
-      * sommet de la pile elle peut etre : IDF | Constant | temporaire
-      * et la partie droite je vais l'avoir a partir ma grammair de mon IDF
-      */
-                                                                                 // |   |
-     pDroiteAffect = depiler(&p);   //----- c'est la partie droite de l'affectation |___|
-
-      cp = depiler(&compatible);
-      compatibilitePdroite = atoi(cp); //--- c'est le type de resultat de la partie droite de l'expression
-      
-if(affect_compatibl(compatibilitePgauche,compatibilitePdroite) == 0){ 
-      printf("[line:%d]\tIncompatibilite ICI \t[%s] de type [%d]\t[%s] de type [%d]\n",linenum,pGaucheAffect,compatibilitePgauche,pDroiteAffect,compatibilitePdroite);
-}
-
-      insererQUADR(":=",pGaucheAffect,"",pDroiteAffect);
-      initializerVar(&pDroiteAffect,&pGaucheAffect);
-
-      compatibilite = -1;
-      cp = "";
-      strcpy(ToString,"");
-}
+Affectation: BBB Expression MC_SEMI
 ;
-BBB: MC_IDF{compatibilite = getType($1);} MC_AFFECT {
-
-        if(NotDeclared($1) == 0) 
-            printf("[%s] IDF NON DECLARE\t line : [%d] \n",$1,linenum);
-
-        compatibilitePgauche = compatibilite;//getType($1);
-        pGaucheAffect = $1;
-
-}     
+BBB: MC_IDF{compatibilite = getType($1);} MC_AFFECT
+;
 Expression : Expression MC_ADD T
-{     
-    operator = ' '; 
-    if(taillePile(&p)>=2){
-
-         while(taillePile(&p) >= 2){
-
-            temporaryName = createName("t",i);
-            i++;
-
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-     
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-            
-
-
-            insererQUADR($2,op1,op2,temporaryName);
-      
-            initializerVar(&op1,&op2);
-            initializeEntier(&typeOP1,&typeOP2);
-
-            if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);}
-
-          }  
-            empiler(&p,temporaryName);
-            empiler(&compatible,ToString);
-}
-             strcpy(ToString,"");
-             compatibilite = -1;
-             cp ="";
-      //le else : on sera dans le cas d'une affectation donc pas besoin d'empiler tous est deja dans la pile
-}
            | Expression MC_SUB T
-{
-  operator = ' '; 
-
-  if(taillePile(&p)>=2){
-       while(taillePile(&p) >= 2){
-            temporaryName = createName("t",i);
-            i++;
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-            insererQUADR($2,op1,op2,temporaryName);
-             if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);
-            }
-       }
-    empiler(&p,temporaryName);
-    empiler(&compatible,ToString);
-}
-    strcpy(ToString,"");
-    compatibilite = -1;
-    cp ="";      /*le else on sera dans le cas d'une affectation donc pas besoin d'empiler*/
-}
            | T
 ;
 
-T:T MC_MUL F {
-      operator = ' ';
-
-    if(taillePile(&p)>=2){
-      
-      while(taillePile(&p) >= 2){
-
-            temporaryName = createName("t",i);
-            i++;
-            
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp);
-
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-
-            insererQUADR($2,op1,op2,temporaryName);
-            initializerVar(&op1,&op2);
-
-             if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);}
-     }
-      empiler(&p,temporaryName);
-      empiler(&compatible,ToString);/* j'empile cp car si op1 est compatible avec op2 donc j'empile le resltas*/
-}/*else tous est deja dans la pile : 
-      empiler(&p,ToString);
-      empiler(&compatible,ToString);
-      */
-      strcpy(ToString,"");
-      compatibilite = -1;
-      cp ="";
-
-}            
-|T MC_DIV F { 
-      operator = '/'; 
-if(taillePile(&p)>=2){
-
-       while(taillePile(&p) >= 2){
-            temporaryName = createName("t",i);
-            i++;
-
-            cp = depiler(&compatible);
-            typeOP2 = atoi(cp);
-            
-            cp = depiler(&compatible);
-            typeOP1 = atoi(cp); /*---- convertire le type de int vers string -----*/
-
-            op2 = depiler(&p);
-            op1 = depiler(&p);
-
-      //if divisonParZero aussi
-      if(divByZero(operator ,fv)) 
-            printf("DivByZero\t[%s] \tsure [%s] \n",op1,op2);
-
-            insererQUADR($2,op1,op2,temporaryName);
-            //initializerVar(&op1,&op2);
-
-            if(affect_compatibl(typeOP1,typeOP2) == 1){
-                  compatibilite = typeOP1;
-                  sprintf(ToString,"%d",compatibilite);
-                  }
-     }
-            empiler(&p,temporaryName);
-            empiler(&compatible,ToString);
-}
-                        /*---- on initialize apres utilisation ------*/
-            compatibilite = -1;
-            cp ="";
-            operator = ' ';
-                  }
-| F
+T: T MC_MUL F
+ | T MC_DIV F
+ | F
 ;
+
 F:MC_IDF {
 
       if(NotDeclared($1) == 1){
