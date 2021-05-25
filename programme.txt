@@ -1,0 +1,5 @@
+CODE Programme
+INTEGER Lynda,Amine;
+CONST Dounia:=20;
+START
+END.
