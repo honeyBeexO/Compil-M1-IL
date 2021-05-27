@@ -1,5 +1,10 @@
 CODE Programme
-INTEGER L,A;
-CONST Dounia:=20;
+INTEGER L,X,Y;
 START
+WHILE (X>=Y) EXECUTE {
+    A:=X+Y;
+    WHILE (X>=Y) EXECUTE {
+        B:=3+A+X;
+    }
+}
 END.

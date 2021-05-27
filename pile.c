@@ -26,6 +26,7 @@ int pilevide(Pile p)
 
 char *sommetpile(Pile p)
 {
+    int a, b;
     if (!pilevide(p))
         return (p->inf);
     return NULL;

@@ -38,6 +38,7 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 
 "CONST" {
       yylval.str = strdup(yytext); 
+      printf("CONSTANTE: %s\n",yytext);
       return MC_CONST; 
       }
 
@@ -80,21 +81,29 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 
 {INTEGER_CONST} {
       int valid_int = atoi(yytext);
-      if (valid_int <= 32720 && valid_int>= -32720){
-      yylval.integer = valid_int; 
-      return INTEGER_CONST;
+      if(yyleng>6){
+            printf(":entier trop long\n");
+      yyterminate();
+      }else{
+            if (valid_int <= 32720 && valid_int>= -32720){
+                  yylval.integer = valid_int; 
+                  printf("const int: %d\n",valid_int);
+                  return INTEGER_CONST;
       }else{
             printf("entier trop long \n");
+      }
       }
       }
 
 {REAL_CONST}  {
       yylval.real = atof(yytext); 
+      printf("const real: %f\n",atof(yytext));
       return REAL_CONST; 
       }
 
 {STRING_CONST} {
        yylval.str = strdup(yytext);
+       printf("String CONS: %s\n",strdup(yytext));
       return STRING_CONST; 
       }
 {CHAR_CONST} {

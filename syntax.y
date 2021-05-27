@@ -116,9 +116,9 @@ Constante:MC_CONST {strcpy(isConst,"oui");} MC_IDF MC_AFFECT Value MC_SEMI
 
 
 
-/* check for double declaration and insererType */
+// check for double declaration and insererType
 list_idf: MC_IDF {}
-        |  MC_IDF MC_COMMA list_idf{}
+        |  MC_IDF MC_COMMA list_idf {}
 ;
 
 Type: MC_INTEGER        { type = 0; }
@@ -129,18 +129,19 @@ Type: MC_INTEGER        { type = 0; }
 
 
 
-Instruction :  Affectation Instruction {}
+Instruction : Affectation Instruction {}
             | IF Instruction                     {}
             | While Instruction                  {}
-            | 
+            | Expression MC_SEMI Instruction
+            |
 ;
 
 
 Affectation: BBB Expression MC_SEMI
 ;
-BBB: MC_IDF{compatibilite = getType($1);} MC_AFFECT
+BBB: MC_IDF {compatibilite = getType($1);} MC_AFFECT
 ;
-Expression : Expression MC_ADD T
+Expression : Expression MC_ADD T{printf("expression\n");}
            | Expression MC_SUB T
            | T
 ;
@@ -150,90 +151,16 @@ T: T MC_MUL F
  | F
 ;
 
-F:MC_IDF {
-
-      if(NotDeclared($1) == 1){
-          //make it equal to 1 later babe OK 
-              printf("IDF [%s] at line [%d] not declared\n",$1,linenum);
-      }
-      //on empile le type de cette idf 
-      compatibilite = getType($1); 
-      /*----- le type de cette idf est dans i -------*/
-      sprintf(ToString,"%d",compatibilite);
-
-      empiler(&compatible,ToString);
-      empiler(&p,$1);
-
-      //sprintf(ToString,"%d",compatibilite);
-}     
-|Value {/* dans la garmmaire de valeur ====> */
-}
-|L_PAREN Expression R_PAREN {}
+F:MC_IDF { /* NotDeclared & compatibilite & DoubleDeclartion */}    
+ | Value {/* dans la garmmaire de valeur ====> */}
+ | L_PAREN Expression R_PAREN {}
 ;
 
-/*
- *------------- le grammaire des valeur constante      -----------------------------*
- * une valeur constante peut etre : 
- *    int   :     0,1...9
- *    float :     3.14 , 2.5 .....
- *    string:     "isilA",....
- *    CHAR  :     'A'
-*/
+
 Value:INTEGER_CONST
-{  
-
-      type_const = 0;
-
-      fv = $1;
-
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-      
-      sprintf(ToString,"%d",$1);
-      empiler(&p,ToString);
-
-      strcpy(ToString,"");
-}
 |REAL_CONST
-{    
-    type_const = 1;
-        fv = $1;
-
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-      
-      sprintf(ToString,"%f",$1);
-      empiler(&p,ToString);
-
-      strcpy(ToString,"");
-}
 |STRING_CONST 
-{ 
-
-      type_const = 2;   
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-
-
-      strcpy(ToString,$1);
-      empiler(&p,$1);
-
-      strcpy(ToString,"");
-}
-|CHAR_CONST 
-{ 
-
-      type_const = 3;   
-
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-
-
-      strcpy(ToString,&($1));
-      empiler(&p,&($1));
-
-      strcpy(ToString,"");
-}
+|CHAR_CONST
 ;
 
 /*----------- le grammaire modifiee de : <Condition>  -------------------------------
@@ -246,140 +173,44 @@ Value:INTEGER_CONST
       Condition:Expression OP_COND Expression
 ;*/
 
-OP_COND:MC_SUP_EQUAL    {  strcpy(OP_CON,$1);      }
-       |MC_INF_EQUAL    {  strcpy(OP_CON,$1);      }
-       |MC_STRICT_SUP   {  strcpy(OP_CON,$1);      }
-       |MC_STRICT_INF   {  strcpy(OP_CON,$1);      }
-       |MC_EQUAL        {  strcpy(OP_CON,$1);      }
-       |MC_NOT_EQUAL    {  strcpy(OP_CON,$1);      }
+OP_COND: MC_SUP_EQUAL    {  strcpy(OP_CON,$1);      }
+       | MC_INF_EQUAL    {  strcpy(OP_CON,$1);      }
+       | MC_STRICT_SUP   {  strcpy(OP_CON,$1);      }
+       | MC_STRICT_INF   {  strcpy(OP_CON,$1);      }
+       | MC_EQUAL        {  strcpy(OP_CON,$1);      }
+       | MC_NOT_EQUAL    {  strcpy(OP_CON,$1);      }
 ;
 
 
-Condition:Expression OP_COND Expression
-{
-
-      pGaucheCond= depiler(&p);
-     
-      printf("pGauche de Condi %s \n",pGaucheCond);
-      quadCondNum = qc;
-      insererQUADR(comparateurReverse(OP_CON),"","","");
-
-      pDroiteCond = depiler(&p);
-      printf("pDroite de Condi %s \n",pDroiteCond);
-
-      ajour_quad(quadCondNum,2,pDroiteCond);
-      ajour_quad(quadCondNum,3,pGaucheCond);
-      /***------- ici il restla position 1 dy quad qu'on viens d'insere  
-       *          on va la mettre a jour dans le fin de IF et Fin De while
-       * ------ ***/
-     initializerVar(&pDroiteCond,&pGaucheCond);
-     //quadCondNum = -1;
+Condition:Expression OP_COND Expression{
+    printf("condition: \n");
 } 
 ;
 
-/*
-AB: OP_COND Expression{
-
-      quadCondNum = qc;
-      insererQUADR(comparateurReverse(OP_CON),"","","");
-      pDroiteCond = depiler(&p);
-}
-;
-
-AC: Expression {}
-;
-*/
 
 /*------------- EXECUTE | <Instructions> |IF | <Condition> |-------*/
 
 
-IF:B Condition R_PAREN{//R3
-//toString contient la valeur de FinCondIF sous forme d'un string
+IF:B Condition R_PAREN{};
 
-      FinCondIF = qc;
-      sprintf(ToString,"%d",FinCondIF);
-      ajour_quad(FinInstIF,1,ToString);
+B:C L_PAREN {}
+;
 
-      /*-------- mettre a jour le quad de la condition ----*/
-        sprintf(ToString,"%d",DebInstIF);
-        ajour_quad(quadCondNum,1,ToString);
-        ajour_quad(quadCondNum,0,comparateur(OP_CON));
-
-      FinInstIF = -1;
-      DebInstIF = -1;
-      DebCondIf = -1;
-      FinCondIF = -1;
-
-      strcpy(ToString,"");
-    
-};
-
-B:C L_PAREN {//R2
-      
-      /*
-       *      ensuite il faut mettre a jour le BR de la routine 1 : < C insereQuad> des       
-       *          <INstructions>
-      */
-     DebCondIf = qc;
-     sprintf(ToString,"%d",DebCondIf);
-     ajour_quad(DebInstIF,1,ToString);
-
-};
-
-C: D Instruction MC_IF {//R1
-      
-     /*----- pour executer les instructions qu'une seule fois ----*/
-     FinInstIF = qc;
-     insererQUADR("BR","","","");
-
-};
-D:MC_EXECUTE {//R1
-      /*----- aller a l'evaluation de la condition -----*/
-      DebInstIF = qc;
-      insererQUADR("BR","","","");
-}
+C: D Instruction MC_IF {};
+D:MC_EXECUTE {/*aller a l'evaluation de la condition       // insererQUADR("BR","","","");*/}
 
 
 /*------------- While ( Condition )Faire  <Instructions> Fait; -------*/
 
-While:AA R_BRACE {
-
-       sprintf(ToString,"%d",DebCondWhile);
-       insererQUADR("BR",ToString,"","");
-
-      FinInstWhile = qc;
-      sprintf(ToString,"%d",FinInstWhile);
-
-      ajour_quad(DebCondWhile,1,ToString);
-      //ajour_quad(DebCondWhile,0,comparateurReverse(OP_CON));
-
-      quadCondNum = -1;
-      strcpy(OP_CON,"");
-}
+While:AA R_BRACE {}
 ;
-AA:BB R_PAREN MC_EXECUTE Instruction {
-
-      //insertion de quad qui fait le branchement sur la condition de while debut de la condition
-     
-
-      /*
-      mise a jour de quad qui contient la valeur de TemCond pour qu'il fait le jump dans le cas de condition non verifier
-      */
-      FinInstWhile = qc;
-      sprintf(ToString,"%d",FinInstWhile);
-      //ajour_quad(quadCondNum,1,ToString);
-      //quadCondNum = -1;
-}
+AA:BB R_PAREN MC_EXECUTE L_BRACE Instruction {}
 ;
 
-BB:CC Condition {
-        FinCondWhile = qc;
-}
+BB:CC Condition {}
 ;
 
-CC:MC_WHILE L_PAREN {
-      DebCondWhile = qc;
-}
+CC:MC_WHILE L_PAREN {}
 
 
 %%

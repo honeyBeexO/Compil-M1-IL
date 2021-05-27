@@ -556,16 +556,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   72
+#define YYLAST   86
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  42
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  27
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  50
+#define YYNRULES  51
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  90
+#define YYNSTATES  94
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   296
@@ -616,14 +616,14 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
        0,   100,   100,   106,   107,   108,   111,   111,   114,   114,
      120,   121,   124,   125,   126,   127,   132,   133,   134,   135,
-     139,   141,   141,   143,   144,   145,   148,   149,   150,   153,
-     169,   171,   182,   197,   210,   223,   249,   250,   251,   252,
-     253,   254,   258,   296,   317,   329,   336,   345,   360,   375,
-     380
+     136,   140,   142,   142,   144,   145,   146,   149,   150,   151,
+     154,   155,   156,   160,   161,   162,   163,   176,   177,   178,
+     179,   180,   181,   185,   194,   196,   199,   200,   205,   207,
+     210,   213
 };
 #endif
 
@@ -673,12 +673,12 @@ static const yytype_int16 yytoknum[] =
 };
 #endif
 
-#define YYPACT_NINF (-25)
+#define YYPACT_NINF (-28)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-1)
+#define YYTABLE_NINF (-23)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -687,15 +687,16 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      16,     5,    32,    12,   -25,   -25,   -25,   -25,   -25,   -25,
-      44,    12,    12,   -25,    48,    -3,   -25,   -25,    49,    43,
-     -25,    40,   -25,    52,    -3,     6,    -3,     6,    42,    -3,
-      -3,    41,    45,     6,    51,    54,    10,    53,   -25,    58,
-     -25,   -25,     6,   -25,   -25,   -25,   -25,    -4,    -2,   -25,
-     -25,   -25,   -14,    50,   -25,    31,   -25,   -25,    28,   -25,
-      49,   -25,    61,   -25,   -25,    13,   -25,     6,     6,     6,
-       6,   -25,   -25,   -25,   -25,   -25,   -25,     6,   -25,   -25,
-      -3,   -25,   -25,   -25,    -2,    -2,   -25,   -25,     8,   -25
+       4,     9,    18,    39,   -28,   -28,   -28,   -28,   -28,   -28,
+      17,    39,    39,   -28,    28,    -3,   -28,   -28,    57,    16,
+      51,     6,   -28,   -28,   -28,   -28,    46,   -28,    64,    -3,
+       6,    -5,   -19,   -28,   -28,    -3,     6,    54,    -3,    -3,
+      52,    55,     6,    65,    67,    35,    66,   -28,    38,   -28,
+      69,   -28,    -2,    -3,     6,     6,     6,     6,   -28,    20,
+      60,   -28,    44,   -28,   -28,    41,   -28,    57,   -28,    73,
+     -28,   -28,   -28,   -28,   -28,   -19,   -19,   -28,   -28,   -28,
+     -28,   -28,   -28,   -28,   -28,     6,   -28,   -28,    63,   -28,
+     -28,     3,    -3,   -28
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -704,30 +705,31 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     5,     1,    12,    13,    14,    15,     8,
-       0,     5,     5,     6,     0,    19,     3,     4,     0,     0,
-      21,     0,    46,     0,    19,     0,    19,     0,     0,    19,
-      19,     0,     0,     0,    10,     0,     0,     0,    50,     0,
-      16,    29,     0,    32,    33,    34,    35,     0,    25,    28,
-      30,    17,     0,     0,    44,     0,    18,    47,     0,    49,
-       0,     7,     0,    22,     2,     0,    20,     0,     0,     0,
-       0,    38,    39,    36,    37,    41,    40,     0,    43,    45,
-      19,    11,     9,    31,    23,    24,    26,    27,    42,    48
+       0,     5,     5,     6,     0,    20,     3,     4,     0,     0,
+      30,     0,    33,    34,    35,    36,     0,    47,     0,    20,
+       0,     0,    26,    29,    31,    20,     0,     0,    20,    20,
+       0,     0,     0,    10,     0,     0,     0,    30,     0,    51,
+       0,    16,     0,    20,     0,     0,     0,     0,    17,     0,
+       0,    45,     0,    18,    48,     0,    50,     0,     7,     0,
+      23,    32,     2,    21,    19,    24,    25,    27,    28,    39,
+      40,    37,    38,    42,    41,     0,    44,    46,     0,    11,
+       9,    43,    20,    49
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -25,   -25,    34,   -25,   -25,   -25,   -25,    11,   -25,   -24,
-     -25,   -25,   -25,   -22,   -20,   -19,    36,   -25,    37,   -25,
-     -25,   -25,   -25,   -25,   -25,   -25,   -25
+     -28,   -28,    23,   -28,   -28,   -28,   -28,    19,   -28,   -27,
+     -28,   -28,   -28,   -21,   -11,     1,    40,   -28,    42,   -28,
+     -28,   -28,   -28,   -28,   -28,   -28,   -28
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,    10,    11,    18,    12,    14,    35,    13,    23,
-      24,    25,    37,    52,    48,    49,    50,    77,    53,    26,
-      27,    28,    29,    30,    31,    32,    33
+       0,     2,    10,    11,    18,    12,    14,    44,    13,    28,
+      29,    30,    46,    31,    32,    33,    34,    85,    60,    35,
+      36,    37,    38,    39,    40,    41,    42
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -735,26 +737,28 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      40,    20,    51,    47,    66,    55,    56,    67,    68,     3,
-      41,    71,    72,    73,    74,    75,    76,    67,    68,     1,
-      65,    69,    70,    42,     5,     6,     7,     8,     9,    67,
-      68,    83,     4,    21,    67,    68,    22,    43,    44,    45,
-      46,    43,    44,    45,    46,    16,    17,    84,    85,    15,
-      86,    87,    19,    34,    36,    88,    89,    38,    39,    54,
-      60,    57,    61,    58,    63,    64,    79,    80,    78,    82,
-      59,    81,    62
+      48,    20,    51,    53,    56,    57,    73,     1,    58,    52,
+      47,    62,    63,     3,    21,    59,    54,    55,     4,    54,
+      55,    59,    15,    21,    54,    55,    74,    45,    22,    23,
+      24,    25,    19,    26,    16,    17,    27,    22,    23,    24,
+      25,    54,    55,    75,    76,    79,    80,    81,    82,    83,
+      84,     5,     6,     7,     8,     9,    71,    77,    78,    54,
+      55,    43,   -22,    49,    91,    93,    22,    23,    24,    25,
+      50,    61,    64,    65,    67,    68,    72,    70,    86,    87,
+      88,    90,    92,     0,    66,    69,    89
 };
 
 static const yytype_int8 yycheck[] =
 {
-      24,     4,    26,    25,     8,    29,    30,    21,    22,     4,
-       4,    25,    26,    27,    28,    29,    30,    21,    22,     3,
-      42,    23,    24,    17,    12,    13,    14,    15,    16,    21,
-      22,    18,     0,    36,    21,    22,    39,    31,    32,    33,
-      34,    31,    32,    33,    34,    11,    12,    67,    68,     5,
-      69,    70,     4,     4,    11,    77,    80,    17,     6,    17,
-       9,    20,     8,    18,    11,     7,    35,    39,    18,     8,
-      33,    60,    36
+      21,     4,    29,     8,    23,    24,     8,     3,    35,    30,
+       4,    38,    39,     4,    17,    36,    21,    22,     0,    21,
+      22,    42,     5,    17,    21,    22,    53,    11,    31,    32,
+      33,    34,     4,    36,    11,    12,    39,    31,    32,    33,
+      34,    21,    22,    54,    55,    25,    26,    27,    28,    29,
+      30,    12,    13,    14,    15,    16,    18,    56,    57,    21,
+      22,     4,    11,    17,    85,    92,    31,    32,    33,    34,
+       6,    17,    20,    18,     9,     8,     7,    11,    18,    35,
+      39,     8,    19,    -1,    42,    45,    67
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -763,13 +767,14 @@ static const yytype_int8 yystos[] =
 {
        0,     3,    43,     4,     0,    12,    13,    14,    15,    16,
       44,    45,    47,    50,    48,     5,    44,    44,    46,     4,
-       4,    36,    39,    51,    52,    53,    61,    62,    63,    64,
-      65,    66,    67,    68,     4,    49,    11,    54,    17,     6,
-      51,     4,    17,    31,    32,    33,    34,    55,    56,    57,
-      58,    51,    55,    60,    17,    51,    51,    20,    18,    60,
-       9,     8,    58,    11,     7,    55,     8,    21,    22,    23,
-      24,    25,    26,    27,    28,    29,    30,    59,    18,    35,
-      39,    49,     8,    18,    56,    56,    57,    57,    55,    51
+       4,    17,    31,    32,    33,    34,    36,    39,    51,    52,
+      53,    55,    56,    57,    58,    61,    62,    63,    64,    65,
+      66,    67,    68,     4,    49,    11,    54,     4,    55,    17,
+       6,    51,    55,     8,    21,    22,    23,    24,    51,    55,
+      60,    17,    51,    51,    20,    18,    60,     9,     8,    58,
+      11,    18,     7,     8,    51,    56,    56,    57,    57,    25,
+      26,    27,    28,    29,    30,    59,    18,    35,    39,    49,
+       8,    55,    19,    51
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -777,21 +782,21 @@ static const yytype_int8 yyr1[] =
 {
        0,    42,    43,    44,    44,    44,    46,    45,    48,    47,
       49,    49,    50,    50,    50,    50,    51,    51,    51,    51,
-      52,    54,    53,    55,    55,    55,    56,    56,    56,    57,
-      57,    57,    58,    58,    58,    58,    59,    59,    59,    59,
-      59,    59,    60,    61,    62,    63,    64,    65,    66,    67,
-      68
+      51,    52,    54,    53,    55,    55,    55,    56,    56,    56,
+      57,    57,    57,    58,    58,    58,    58,    59,    59,    59,
+      59,    59,    59,    60,    61,    62,    63,    64,    65,    66,
+      67,    68
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     7,     2,     2,     0,     0,     4,     0,     6,
-       1,     3,     1,     1,     1,     1,     2,     2,     2,     0,
-       3,     0,     3,     3,     3,     1,     3,     3,     1,     1,
-       1,     3,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     3,     3,     2,     3,     1,     2,     4,     2,
-       2
+       1,     3,     1,     1,     1,     1,     2,     2,     2,     3,
+       0,     3,     0,     3,     3,     3,     1,     3,     3,     1,
+       1,     1,     3,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     3,     3,     2,     3,     1,     2,     5,
+       2,     2
 };
 
 
@@ -1264,364 +1269,199 @@ yyreduce:
       printf("\n --- Votre Programme a compilé correct --- \n");
       YYACCEPT;
       }
-#line 1268 "syntax.tab.c"
+#line 1273 "syntax.tab.c"
     break;
 
   case 6: /* $@1: %empty  */
 #line 111 "syntax.y"
               {strcpy(isConst,"non");}
-#line 1274 "syntax.tab.c"
+#line 1279 "syntax.tab.c"
     break;
 
   case 8: /* $@2: %empty  */
 #line 114 "syntax.y"
                    {strcpy(isConst,"oui");}
-#line 1280 "syntax.tab.c"
+#line 1285 "syntax.tab.c"
     break;
 
   case 10: /* list_idf: MC_IDF  */
 #line 120 "syntax.y"
                  {}
-#line 1286 "syntax.tab.c"
+#line 1291 "syntax.tab.c"
     break;
 
   case 11: /* list_idf: MC_IDF MC_COMMA list_idf  */
 #line 121 "syntax.y"
-                                   {}
-#line 1292 "syntax.tab.c"
+                                    {}
+#line 1297 "syntax.tab.c"
     break;
 
   case 12: /* Type: MC_INTEGER  */
 #line 124 "syntax.y"
                         { type = 0; }
-#line 1298 "syntax.tab.c"
+#line 1303 "syntax.tab.c"
     break;
 
   case 13: /* Type: MC_REAL  */
 #line 125 "syntax.y"
                         { type = 1; }
-#line 1304 "syntax.tab.c"
+#line 1309 "syntax.tab.c"
     break;
 
   case 14: /* Type: MC_STRING  */
 #line 126 "syntax.y"
                         { type = 2; }
-#line 1310 "syntax.tab.c"
+#line 1315 "syntax.tab.c"
     break;
 
   case 15: /* Type: MC_CHAR  */
 #line 127 "syntax.y"
                         { type = 3; }
-#line 1316 "syntax.tab.c"
+#line 1321 "syntax.tab.c"
     break;
 
   case 16: /* Instruction: Affectation Instruction  */
 #line 132 "syntax.y"
-                                       {}
-#line 1322 "syntax.tab.c"
+                                      {}
+#line 1327 "syntax.tab.c"
     break;
 
   case 17: /* Instruction: IF Instruction  */
 #line 133 "syntax.y"
                                                  {}
-#line 1328 "syntax.tab.c"
+#line 1333 "syntax.tab.c"
     break;
 
   case 18: /* Instruction: While Instruction  */
 #line 134 "syntax.y"
                                                  {}
-#line 1334 "syntax.tab.c"
+#line 1339 "syntax.tab.c"
     break;
 
-  case 21: /* $@3: %empty  */
-#line 141 "syntax.y"
-           {compatibilite = getType((yyvsp[0].str));}
-#line 1340 "syntax.tab.c"
+  case 22: /* $@3: %empty  */
+#line 142 "syntax.y"
+            {compatibilite = getType((yyvsp[0].str));}
+#line 1345 "syntax.tab.c"
     break;
 
-  case 29: /* F: MC_IDF  */
-#line 153 "syntax.y"
-         {
-
-      if(NotDeclared((yyvsp[0].str)) == 1){
-          //make it equal to 1 later babe OK 
-              printf("IDF [%s] at line [%d] not declared\n",(yyvsp[0].str),linenum);
-      }
-      //on empile le type de cette idf 
-      compatibilite = getType((yyvsp[0].str)); 
-      /*----- le type de cette idf est dans i -------*/
-      sprintf(ToString,"%d",compatibilite);
-
-      empiler(&compatible,ToString);
-      empiler(&p,(yyvsp[0].str));
-
-      //sprintf(ToString,"%d",compatibilite);
-}
-#line 1361 "syntax.tab.c"
+  case 24: /* Expression: Expression MC_ADD T  */
+#line 144 "syntax.y"
+                                {printf("expression\n");}
+#line 1351 "syntax.tab.c"
     break;
 
-  case 30: /* F: Value  */
-#line 169 "syntax.y"
-       {/* dans la garmmaire de valeur ====> */
-}
-#line 1368 "syntax.tab.c"
+  case 30: /* F: MC_IDF  */
+#line 154 "syntax.y"
+         { /* NotDeclared & compatibilite & DoubleDeclartion */}
+#line 1357 "syntax.tab.c"
     break;
 
-  case 31: /* F: L_PAREN Expression R_PAREN  */
-#line 171 "syntax.y"
-                            {}
-#line 1374 "syntax.tab.c"
+  case 31: /* F: Value  */
+#line 155 "syntax.y"
+         {/* dans la garmmaire de valeur ====> */}
+#line 1363 "syntax.tab.c"
     break;
 
-  case 32: /* Value: INTEGER_CONST  */
-#line 183 "syntax.y"
-{  
+  case 32: /* F: L_PAREN Expression R_PAREN  */
+#line 156 "syntax.y"
+                              {}
+#line 1369 "syntax.tab.c"
+    break;
 
-      type_const = 0;
+  case 37: /* OP_COND: MC_SUP_EQUAL  */
+#line 176 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
+#line 1375 "syntax.tab.c"
+    break;
 
-      fv = (yyvsp[0].integer);
+  case 38: /* OP_COND: MC_INF_EQUAL  */
+#line 177 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
+#line 1381 "syntax.tab.c"
+    break;
 
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-      
-      sprintf(ToString,"%d",(yyvsp[0].integer));
-      empiler(&p,ToString);
+  case 39: /* OP_COND: MC_STRICT_SUP  */
+#line 178 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
+#line 1387 "syntax.tab.c"
+    break;
 
-      strcpy(ToString,"");
-}
+  case 40: /* OP_COND: MC_STRICT_INF  */
+#line 179 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
 #line 1393 "syntax.tab.c"
     break;
 
-  case 33: /* Value: REAL_CONST  */
-#line 198 "syntax.y"
-{    
-    type_const = 1;
-        fv = (yyvsp[0].real);
+  case 41: /* OP_COND: MC_EQUAL  */
+#line 180 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
+#line 1399 "syntax.tab.c"
+    break;
 
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-      
-      sprintf(ToString,"%f",(yyvsp[0].real));
-      empiler(&p,ToString);
+  case 42: /* OP_COND: MC_NOT_EQUAL  */
+#line 181 "syntax.y"
+                         {  strcpy(OP_CON,(yyvsp[0].str));      }
+#line 1405 "syntax.tab.c"
+    break;
 
-      strcpy(ToString,"");
+  case 43: /* Condition: Expression OP_COND Expression  */
+#line 185 "syntax.y"
+                                       {
+    printf("condition: \n");
 }
-#line 1410 "syntax.tab.c"
+#line 1413 "syntax.tab.c"
     break;
 
-  case 34: /* Value: STRING_CONST  */
-#line 211 "syntax.y"
-{ 
-
-      type_const = 2;   
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-
-
-      strcpy(ToString,(yyvsp[0].str));
-      empiler(&p,(yyvsp[0].str));
-
-      strcpy(ToString,"");
-}
-#line 1427 "syntax.tab.c"
+  case 44: /* IF: B Condition R_PAREN  */
+#line 194 "syntax.y"
+                      {}
+#line 1419 "syntax.tab.c"
     break;
 
-  case 35: /* Value: CHAR_CONST  */
-#line 224 "syntax.y"
-{ 
-
-      type_const = 3;   
-
-      sprintf(ToString,"%d",type_const);
-      empiler(&compatible,ToString);
-
-
-      strcpy(ToString,&((yyvsp[0].myChar)));
-      empiler(&p,&((yyvsp[0].myChar)));
-
-      strcpy(ToString,"");
-}
-#line 1445 "syntax.tab.c"
+  case 45: /* B: C L_PAREN  */
+#line 196 "syntax.y"
+            {}
+#line 1425 "syntax.tab.c"
     break;
 
-  case 36: /* OP_COND: MC_SUP_EQUAL  */
-#line 249 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1451 "syntax.tab.c"
+  case 46: /* C: D Instruction MC_IF  */
+#line 199 "syntax.y"
+                       {}
+#line 1431 "syntax.tab.c"
     break;
 
-  case 37: /* OP_COND: MC_INF_EQUAL  */
-#line 250 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1457 "syntax.tab.c"
+  case 47: /* D: MC_EXECUTE  */
+#line 200 "syntax.y"
+             {/*aller a l'evaluation de la condition       // insererQUADR("BR","","","");*/}
+#line 1437 "syntax.tab.c"
     break;
 
-  case 38: /* OP_COND: MC_STRICT_SUP  */
-#line 251 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1463 "syntax.tab.c"
+  case 48: /* While: AA R_BRACE  */
+#line 205 "syntax.y"
+                 {}
+#line 1443 "syntax.tab.c"
     break;
 
-  case 39: /* OP_COND: MC_STRICT_INF  */
-#line 252 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1469 "syntax.tab.c"
+  case 49: /* AA: BB R_PAREN MC_EXECUTE L_BRACE Instruction  */
+#line 207 "syntax.y"
+                                             {}
+#line 1449 "syntax.tab.c"
     break;
 
-  case 40: /* OP_COND: MC_EQUAL  */
-#line 253 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1475 "syntax.tab.c"
+  case 50: /* BB: CC Condition  */
+#line 210 "syntax.y"
+                {}
+#line 1455 "syntax.tab.c"
     break;
 
-  case 41: /* OP_COND: MC_NOT_EQUAL  */
-#line 254 "syntax.y"
-                        {  strcpy(OP_CON,(yyvsp[0].str));      }
-#line 1481 "syntax.tab.c"
-    break;
-
-  case 42: /* Condition: Expression OP_COND Expression  */
-#line 259 "syntax.y"
-{
-
-      pGaucheCond= depiler(&p);
-     
-      printf("pGauche de Condi %s \n",pGaucheCond);
-      quadCondNum = qc;
-      insererQUADR(comparateurReverse(OP_CON),"","","");
-
-      pDroiteCond = depiler(&p);
-      printf("pDroite de Condi %s \n",pDroiteCond);
-
-      ajour_quad(quadCondNum,2,pDroiteCond);
-      ajour_quad(quadCondNum,3,pGaucheCond);
-      /***------- ici il restla position 1 dy quad qu'on viens d'insere  
-       *          on va la mettre a jour dans le fin de IF et Fin De while
-       * ------ ***/
-     initializerVar(&pDroiteCond,&pGaucheCond);
-     //quadCondNum = -1;
-}
-#line 1505 "syntax.tab.c"
-    break;
-
-  case 43: /* IF: B Condition R_PAREN  */
-#line 296 "syntax.y"
-                      {//R3
-//toString contient la valeur de FinCondIF sous forme d'un string
-
-      FinCondIF = qc;
-      sprintf(ToString,"%d",FinCondIF);
-      ajour_quad(FinInstIF,1,ToString);
-
-      /*-------- mettre a jour le quad de la condition ----*/
-        sprintf(ToString,"%d",DebInstIF);
-        ajour_quad(quadCondNum,1,ToString);
-        ajour_quad(quadCondNum,0,comparateur(OP_CON));
-
-      FinInstIF = -1;
-      DebInstIF = -1;
-      DebCondIf = -1;
-      FinCondIF = -1;
-
-      strcpy(ToString,"");
-    
-}
-#line 1530 "syntax.tab.c"
-    break;
-
-  case 44: /* B: C L_PAREN  */
-#line 317 "syntax.y"
-            {//R2
-      
-      /*
-       *      ensuite il faut mettre a jour le BR de la routine 1 : < C insereQuad> des       
-       *          <INstructions>
-      */
-     DebCondIf = qc;
-     sprintf(ToString,"%d",DebCondIf);
-     ajour_quad(DebInstIF,1,ToString);
-
-}
-#line 1546 "syntax.tab.c"
-    break;
-
-  case 45: /* C: D Instruction MC_IF  */
-#line 329 "syntax.y"
-                       {//R1
-      
-     /*----- pour executer les instructions qu'une seule fois ----*/
-     FinInstIF = qc;
-     insererQUADR("BR","","","");
-
-}
-#line 1558 "syntax.tab.c"
-    break;
-
-  case 46: /* D: MC_EXECUTE  */
-#line 336 "syntax.y"
-             {//R1
-      /*----- aller a l'evaluation de la condition -----*/
-      DebInstIF = qc;
-      insererQUADR("BR","","","");
-}
-#line 1568 "syntax.tab.c"
-    break;
-
-  case 47: /* While: AA R_BRACE  */
-#line 345 "syntax.y"
-                 {
-
-       sprintf(ToString,"%d",DebCondWhile);
-       insererQUADR("BR",ToString,"","");
-
-      FinInstWhile = qc;
-      sprintf(ToString,"%d",FinInstWhile);
-
-      ajour_quad(DebCondWhile,1,ToString);
-      //ajour_quad(DebCondWhile,0,comparateurReverse(OP_CON));
-
-      quadCondNum = -1;
-      strcpy(OP_CON,"");
-}
-#line 1587 "syntax.tab.c"
-    break;
-
-  case 48: /* AA: BB R_PAREN MC_EXECUTE Instruction  */
-#line 360 "syntax.y"
-                                     {
-
-      //insertion de quad qui fait le branchement sur la condition de while debut de la condition
-     
-
-      /*
-      mise a jour de quad qui contient la valeur de TemCond pour qu'il fait le jump dans le cas de condition non verifier
-      */
-      FinInstWhile = qc;
-      sprintf(ToString,"%d",FinInstWhile);
-      //ajour_quad(quadCondNum,1,ToString);
-      //quadCondNum = -1;
-}
-#line 1605 "syntax.tab.c"
-    break;
-
-  case 49: /* BB: CC Condition  */
-#line 375 "syntax.y"
-                {
-        FinCondWhile = qc;
-}
-#line 1613 "syntax.tab.c"
-    break;
-
-  case 50: /* CC: MC_WHILE L_PAREN  */
-#line 380 "syntax.y"
-                    {
-      DebCondWhile = qc;
-}
-#line 1621 "syntax.tab.c"
+  case 51: /* CC: MC_WHILE L_PAREN  */
+#line 213 "syntax.y"
+                    {}
+#line 1461 "syntax.tab.c"
     break;
 
 
-#line 1625 "syntax.tab.c"
+#line 1465 "syntax.tab.c"
 
       default: break;
     }
@@ -1815,7 +1655,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 385 "syntax.y"
+#line 216 "syntax.y"
 
 
 void yyerror(char *s) {
