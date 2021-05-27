@@ -51,7 +51,7 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 
 
 "WHEN" {yylval.str = strdup(yytext);return MC_WHEN;}
-"DO" {yylval.str = strdup(yytext);return MC_DO;}
+"DO"|"do" {yylval.str = strdup(yytext);return MC_DO;}
 "OTHERWISE" {yylval.str = strdup(yytext);return MC_OTHERWISE;}
 "PROD" {yylval.str = strdup(yytext);return MC_PROD;}
 

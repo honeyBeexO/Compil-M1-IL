@@ -130,6 +130,7 @@ Type: MC_INTEGER        { type = 0; }
 
 
 Instruction : Affectation Instruction {}
+            | When Instruction                     {}
             | IF Instruction                     {}
             | While Instruction                  {}
             | Expression MC_SEMI Instruction
@@ -141,16 +142,15 @@ Affectation: BBB Expression MC_SEMI
 ;
 BBB: MC_IDF {compatibilite = getType($1);} MC_AFFECT
 ;
+
 Expression : Expression MC_ADD T{printf("expression\n");}
            | Expression MC_SUB T
            | T
 ;
-
 T: T MC_MUL F
  | T MC_DIV F
  | F
 ;
-
 F:MC_IDF { /* NotDeclared & compatibilite & DoubleDeclartion */}    
  | Value {/* dans la garmmaire de valeur ====> */}
  | L_PAREN Expression R_PAREN {}
@@ -190,7 +190,12 @@ Condition:Expression OP_COND Expression{
 
 /*------------- EXECUTE | <Instructions> |IF | <Condition> |-------*/
 
-
+When: MC_WHEN L_PAREN Condition R_PAREN MC_DO L_BRACE Instruction R_BRACE X2
+; 
+X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI
+| MC_SEMI
+|
+;
 IF:B Condition R_PAREN{};
 
 B:C L_PAREN {}
@@ -202,7 +207,7 @@ D:MC_EXECUTE {/*aller a l'evaluation de la condition       // insererQUADR("BR",
 
 /*------------- While ( Condition )Faire  <Instructions> Fait; -------*/
 
-While:AA R_BRACE {}
+While:AA R_BRACE MC_SEMI {}
 ;
 AA:BB R_PAREN MC_EXECUTE L_BRACE Instruction {}
 ;
