@@ -22,7 +22,7 @@ typedef struct tableH
 
 tableH TableHachage[673];
 
-int hachage(char *chaine)
+extern int hachage(char *chaine)
 {
     unsigned int i = 0, n = strlen(chaine), u = 0, j = 0, k = 1, h = 0;
     for (i = 0; i < n; i++)
@@ -37,7 +37,7 @@ int hachage(char *chaine)
     return h;
 }
 
-int rechercher(char *chaine)
+extern int rechercher(char *chaine)
 {
     int existe = 0;
     int position = 0;

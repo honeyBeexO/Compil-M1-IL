@@ -1,6 +1,6 @@
 
 extern void supprimerTS(char *nom);
-
+extern int hachage(char *chaine);
 typedef struct pile
 {
     char nom[20];

@@ -2,7 +2,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-
+    #include "pile.h"
     extern FILE * yyin;
     void yyerror(char *);
     int yylex(void);
@@ -52,16 +52,12 @@ Declaration: Variable Declaration
            |
 ;
 
-Variable:Type {} list_idf MC_SEMI 
+Variable:Type list_idf MC_SEMI 
 ;
 
-Constante:MC_CONST {} MC_IDF{
-    if(doubleDeclaration($1) == 0){
-        insererType($1,sauvType,"Variable",1);
-    }else{
-        printf("ERROR semantique: Double declaration\n");
-    }
-} MC_AFFECT Value MC_SEMI
+Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
+            insererType($2,"Constante","Const",1);
+}
 ;
 
 

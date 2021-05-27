@@ -1,7 +1,5 @@
 CODE Programme
-INTEGER L,X,Y;
-REAL M;
-CONST M:=20;
+CONST N:=20;
+REAL M,X,A;
 START
-W:=30;
 END.
