@@ -1,72 +1,16 @@
 %{
-      #include "symbtab.c"
-      #include "quadMat.c"
-      #include "pile.c"
-      extern FILE * yyin;
-      void yyerror(char *);
-      int yylex(void);
-      int sym[26];
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
 
-      int type = -1;
-      int taille = -1;
-      char isConst[4] = "non";
+    extern FILE * yyin;
+    void yyerror(char *);
+    int yylex(void);
+    void afficher();
+    int doubleDeclaration(char entites[]);
+    void insererType(char entites[], char typ[], char nature[], int taille);
 
-       int linenum ;
-       int qc ;
-       int erro_parenthese;
-/*--------------- Pour verifier la compatibilte entre les type : partieGauche compatibe ? partieDroite -----*/
-      int compatibilite = -1;
-
-      int compatibilitePdroite = -1;
-      int compatibilitePgauche = -1;
-
-      int typeOP1 = -1;
-      int typeOP2 = -1;
-
-      Pile compatible;
-      int type_const = 0;
-      char *cp = "";
-/*--------------- pour verifier la division ----------------------------*/
-      char operator;
-      float fv;
-/*--------------- instruction de IF -------------------------------------*/
-      int DebInstIF = 0;
-      int FinInstIF = 0;
-      int FinCondIF = 0;
-      int DebCondIf = 0;
-/*--------------- instruction de While ---------------------------------*/
-      int DebCondWhile = 0;
-      int FinCondWhile = 0;
-      int FinInstWhile = 0;
-
-      char OP_CON[3];
-      int i = 0;
-
-      char *temporaryName = "";
-      char *temporaryNameAffect = "";
-
-      char ToString[10];
-
-      Pile p ;
-      char expression[100];
-      char *e;
-
-/*-------- pour manipuler les expression ----------*/
-    char oper[10]="";
-    char *op1 ="";
-    char *op2 ="";
-    char res[10]="";
-
-/*-------- pour manipuler les conditions ----------*/
-      char *pDroiteCond = "";
-      char *pGaucheCond = "";
-      int   quadCondNum = -1;
-
-/*-------- pour manipuler les Affectations ----------*/
-      char *pGaucheAffect = "";
-      char *pDroiteAffect = "";
-
-
+    char sauvType[20];
 %}
 
 %union{
@@ -108,23 +52,29 @@ Declaration: Variable Declaration
            |
 ;
 
-Variable:Type {strcpy(isConst,"non");} list_idf MC_SEMI 
+Variable:Type {} list_idf MC_SEMI 
 ;
 
-Constante:MC_CONST {strcpy(isConst,"oui");} MC_IDF MC_AFFECT Value MC_SEMI
+Constante:MC_CONST {} MC_IDF MC_AFFECT Value MC_SEMI
 ;
 
 
-
-// check for double declaration and insererType
-list_idf: MC_IDF {}
-        |  MC_IDF MC_COMMA list_idf {}
+list_idf: MC_IDF {
+    if(doubleDeclaration($1) == 0){
+        insererType($1,sauvType,"Variable",1);
+    }
+}
+        |  MC_IDF  {
+    if(doubleDeclaration($1) == 0){
+        insererType($1,sauvType,"Variable",1);
+    }
+} MC_COMMA list_idf {}
 ;
 
-Type: MC_INTEGER        { type = 0; }
-    | MC_REAL           { type = 1; }
-    | MC_STRING         { type = 2; }
-    | MC_CHAR           { type = 3; }
+Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}      
+    | MC_REAL           {strcpy(sauvType,"REAL");}
+    | MC_STRING         {strcpy(sauvType,"STRING");}
+    | MC_CHAR           {strcpy(sauvType,"CHAR");}
 ;
 
 
@@ -140,7 +90,7 @@ Instruction : Affectation Instruction {}
 
 Affectation: BBB Expression MC_SEMI
 ;
-BBB: MC_IDF {compatibilite = getType($1);} MC_AFFECT
+BBB: MC_IDF {} MC_AFFECT
 ;
 
 Expression : Expression MC_ADD T{printf("expression\n");}
@@ -173,12 +123,12 @@ Value:INTEGER_CONST
       Condition:Expression OP_COND Expression
 ;*/
 
-OP_COND: MC_SUP_EQUAL    {  strcpy(OP_CON,$1);      }
-       | MC_INF_EQUAL    {  strcpy(OP_CON,$1);      }
-       | MC_STRICT_SUP   {  strcpy(OP_CON,$1);      }
-       | MC_STRICT_INF   {  strcpy(OP_CON,$1);      }
-       | MC_EQUAL        {  strcpy(OP_CON,$1);      }
-       | MC_NOT_EQUAL    {  strcpy(OP_CON,$1);      }
+OP_COND: MC_SUP_EQUAL    
+       | MC_INF_EQUAL    
+       | MC_STRICT_SUP   
+       | MC_STRICT_INF   
+       | MC_EQUAL       
+       | MC_NOT_EQUAL    
 ;
 
 
@@ -225,16 +175,11 @@ void yyerror(char *s) {
 }
  int main(int argc,char **argv){
      yyin = fopen( "programme.txt", "r" );
-
-      init();           //elle initialise ma table de ymbole
-      initialize();     //elle initialiser ma matrice quad
-
-     if (yyin==NULL) 
+    if (yyin==NULL) 
             printf("ERROR  \n");
      else{ 
             yyparse();
-            // afficherTS();
-            // printQuad(quadMatrix);
+            afficher();
      }
       return 0;
 }

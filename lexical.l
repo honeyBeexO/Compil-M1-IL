@@ -1,7 +1,9 @@
 %{
 
-      #include "syntax.tab.h"    
-      extern int numOfLines = 1; // initialize to 1
+      #include "syntax.tab.h"   
+      #include "ts.h"
+      extern int lineNumber = 1; // initialize to 1
+      extern int columnNumber = 1; // initialize to 1
       void ret_print(char *token_type);
       extern YYSTYPE yylval;
       //extern TS *ts;
@@ -114,22 +116,22 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 {IDF} {
       if(strlen(yytext)<20){
             yylval.str = strdup(yytext); 
-            printf("IDF: %s\n",yytext);
+            inserer(yytext,"IDF", hachage(yytext));
             return MC_IDF; 
       }else{
-            printf("line: %d idf trop long: %s \n",numOfLines,yytext);
+            printf("line: %d idf trop long: %s \n",lineNumber,yytext);
       }
 }
 
 [ \t]
 [ \t\r\f]+ /* eat up whitespace */
-\n numOfLines++;
-. { printf("Error lexical a la ligne: %d\n",numOfLines);
+\n lineNumber++;
+. { printf("Error lexical a la ligne: %d\n",lineNumber);
     yyterminate();
 }
 %%
 void ret_print(char *token_type){
-   printf("yytext: %s\ttoken: %s\t linenum: %d\n", yytext, token_type, numOfLines);
+   printf("yytext: %s\ttoken: %s\t linenum: %d\n", yytext, token_type, lineNumber);
 }
 int yywrap(){
       return 1;

@@ -1,0 +1,41 @@
+int type Reconnu: INTEGER
+condition: 
+expression
+condition: 
+const int: 3
+expression
+expression
+condition: 
+condition: 
+expression
+condition: 
+const int: 3
+expression
+expression
+condition: 
+expression
+condition: 
+const int: 3
+expression
+expression
+condition: 
+condition: 
+expression
+condition: 
+const int: 3
+expression
+expression
+
+ --- Votre Programme a compilé correct --- 
+  
+  
+	 ********************************** Table des symboles **************************************** /
+	 ______________________________________________________________________________________________  
+	|      NomEntite      |   CodeEntite        |      NatureEntite     |     TypeEntite   | taille  |
+	 ________________________________________________________________________________________________
+	|                    A |                  IDF |                      |                 |     0   |
+	|                    B |                  IDF |                      |                 |     0   |
+	|                    L |                  IDF |                      |                 |     0   |
+	|                    X |                  IDF |                      |                 |     0   |
+	|                    Y |                  IDF |                      |                 |     0   |
+	|            Programme |                  IDF |                      |                 |     0   |
