@@ -63,19 +63,21 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
 
 list_idf: MC_IDF {
     if(doubleDeclaration($1) == 0){
+        inserIdfDecl($1);
         insererType($1,sauvType,"Variable",1);
     }else{
         printf("ERROR semantique: Double declaration\n");
     }
 }
-        |  MC_IDF  {
+        |  MC_IDF MC_COMMA {
     if(doubleDeclaration($1) == 0){
+        inserIdfDecl($1);
+        empiler($1);
         insererType($1,sauvType,"Variable",1);
     }else{
         printf("ERROR semantique: Double declaration\n");
     }
-}
-MC_COMMA list_idf {}
+} list_idf {}
 ;
 
 Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}      
@@ -97,7 +99,7 @@ Instruction : Affectation Instruction {}
 
 Affectation: BBB Expression MC_SEMI
 ;
-BBB: MC_IDF {} MC_AFFECT
+BBB: MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); } MC_AFFECT
 ;
 
 Expression : Expression MC_ADD T{printf("expression\n");}
@@ -108,8 +110,8 @@ T: T MC_MUL F
  | T MC_DIV F
  | F
 ;
-F:MC_IDF { /* NotDeclared & compatibilite & DoubleDeclartion */}    
- | Value {/* dans la garmmaire de valeur ====> */}
+F:MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); }
+ | Value
  | L_PAREN Expression R_PAREN {}
 ;
 
@@ -187,6 +189,7 @@ void yyerror(char *s) {
      else{ 
             yyparse();
             afficher();
+            afficherDecl();
      }
       return 0;
 }

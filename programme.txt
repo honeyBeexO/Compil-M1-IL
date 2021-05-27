@@ -2,4 +2,5 @@ CODE Programme
 CONST N:=20;
 REAL M,X,A;
 START
+W:=20;
 END.
