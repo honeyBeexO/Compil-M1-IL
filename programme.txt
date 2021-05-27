@@ -1,33 +1,7 @@
 CODE Programme
 INTEGER L,X,Y;
+REAL M;
+CONST M:=20;
 START
-WHILE (X>=Y) EXECUTE {
-    A:=X+Y;
-    WHILE (X>=Y) EXECUTE {
-        B:=3+A+X;
-    };
-};
-WHEN (X>= Y) DO {
-    WHILE (X>=Y) EXECUTE {
-        A:=X+Y;
-        WHILE (X>=Y) EXECUTE {
-            B:=3+A+X;
-        };
-    };
-} OTHERWISE {
-    WHILE (X>=Y) EXECUTE {
-        A:=X+Y;
-        WHILE (X>=Y) EXECUTE {
-            B:=3+A+X;
-        };
-    };
-    WHEN (X>= Y) DO {
-        WHILE (X>=Y) EXECUTE {
-            A:=X+Y;
-            WHILE (X>=Y) EXECUTE {
-                B:=3+A+X;
-            };
-        };
-    };
-};
+W:=30;
 END.

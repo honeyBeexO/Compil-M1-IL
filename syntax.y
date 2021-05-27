@@ -55,20 +55,31 @@ Declaration: Variable Declaration
 Variable:Type {} list_idf MC_SEMI 
 ;
 
-Constante:MC_CONST {} MC_IDF MC_AFFECT Value MC_SEMI
+Constante:MC_CONST {} MC_IDF{
+    if(doubleDeclaration($1) == 0){
+        insererType($1,sauvType,"Variable",1);
+    }else{
+        printf("ERROR semantique: Double declaration\n");
+    }
+} MC_AFFECT Value MC_SEMI
 ;
 
 
 list_idf: MC_IDF {
     if(doubleDeclaration($1) == 0){
         insererType($1,sauvType,"Variable",1);
+    }else{
+        printf("ERROR semantique: Double declaration\n");
     }
 }
         |  MC_IDF  {
     if(doubleDeclaration($1) == 0){
         insererType($1,sauvType,"Variable",1);
+    }else{
+        printf("ERROR semantique: Double declaration\n");
     }
-} MC_COMMA list_idf {}
+}
+MC_COMMA list_idf {}
 ;
 
 Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}      
