@@ -3,6 +3,8 @@
     #include <stdlib.h>
     #include <string.h>
     #include "pile.h"
+    #include "quad.h"
+
     extern FILE * yyin;
     void yyerror(char *);
     int yylex(void);
@@ -102,7 +104,7 @@ Affectation: BBB Expression MC_SEMI
 BBB: MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); } MC_AFFECT
 ;
 
-Expression : Expression MC_ADD T{printf("expression\n");}
+Expression : Expression MC_ADD T
            | Expression MC_SUB T
            | T
 ;
@@ -183,6 +185,7 @@ void yyerror(char *s) {
    fprintf(stderr, "%s\n", s);
 }
  int main(int argc,char **argv){
+     initialize();
      yyin = fopen( "programme.txt", "r" );
     if (yyin==NULL) 
             printf("ERROR  \n");
@@ -190,6 +193,7 @@ void yyerror(char *s) {
             yyparse();
             afficher();
             afficherDecl();
+            printQuadreplet();
      }
       return 0;
 }

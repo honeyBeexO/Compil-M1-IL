@@ -73,6 +73,8 @@
     #include <stdlib.h>
     #include <string.h>
     #include "pile.h"
+    #include "quad.h"
+
     extern FILE * yyin;
     void yyerror(char *);
     int yylex(void);
@@ -82,7 +84,7 @@
 
     char sauvType[20];
 
-#line 86 "syntax.tab.c"
+#line 88 "syntax.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -563,12 +565,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    44,    44,    50,    51,    52,    55,    58,    64,    72,
-      72,    83,    84,    85,    86,    91,    92,    93,    94,    95,
-      96,   100,   102,   102,   105,   106,   107,   109,   110,   111,
-     113,   114,   115,   119,   120,   121,   122,   135,   136,   137,
-     138,   139,   140,   144,   152,   154,   155,   156,   158,   160,
-     163,   164,   169,   171,   174,   177
+       0,    46,    46,    52,    53,    54,    57,    60,    66,    74,
+      74,    85,    86,    87,    88,    93,    94,    95,    96,    97,
+      98,   102,   104,   104,   107,   108,   109,   111,   112,   113,
+     115,   116,   117,   121,   122,   123,   124,   137,   138,   139,
+     140,   141,   142,   146,   154,   156,   157,   158,   160,   162,
+     165,   166,   171,   173,   176,   179
 };
 #endif
 
@@ -1219,24 +1221,24 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* S: MC_CODE MC_IDF Declaration MC_START Instruction MC_END MC_DOT  */
-#line 44 "syntax.y"
+#line 46 "syntax.y"
                                                                {
       printf("\n --- Votre Programme a compilé correct --- \n");
       YYACCEPT;
       }
-#line 1228 "syntax.tab.c"
+#line 1230 "syntax.tab.c"
     break;
 
   case 7: /* Constante: MC_CONST MC_IDF MC_AFFECT Value MC_SEMI  */
-#line 58 "syntax.y"
+#line 60 "syntax.y"
                                                  {
             insererType((yyvsp[-3].str),"Constante","Const",1);
 }
-#line 1236 "syntax.tab.c"
+#line 1238 "syntax.tab.c"
     break;
 
   case 8: /* list_idf: MC_IDF  */
-#line 64 "syntax.y"
+#line 66 "syntax.y"
                  {
     if(doubleDeclaration((yyvsp[0].str)) == 0){
         inserIdfDecl((yyvsp[0].str));
@@ -1245,11 +1247,11 @@ yyreduce:
         printf("ERROR semantique: Double declaration\n");
     }
 }
-#line 1249 "syntax.tab.c"
+#line 1251 "syntax.tab.c"
     break;
 
   case 9: /* $@1: %empty  */
-#line 72 "syntax.y"
+#line 74 "syntax.y"
                            {
     if(doubleDeclaration((yyvsp[-1].str)) == 0){
         inserIdfDecl((yyvsp[-1].str));
@@ -1259,145 +1261,139 @@ yyreduce:
         printf("ERROR semantique: Double declaration\n");
     }
 }
-#line 1263 "syntax.tab.c"
+#line 1265 "syntax.tab.c"
     break;
 
   case 10: /* list_idf: MC_IDF MC_COMMA $@1 list_idf  */
-#line 80 "syntax.y"
+#line 82 "syntax.y"
            {}
-#line 1269 "syntax.tab.c"
+#line 1271 "syntax.tab.c"
     break;
 
   case 11: /* Type: MC_INTEGER  */
-#line 83 "syntax.y"
+#line 85 "syntax.y"
                         {strcpy(sauvType,"INTEGER");}
-#line 1275 "syntax.tab.c"
+#line 1277 "syntax.tab.c"
     break;
 
   case 12: /* Type: MC_REAL  */
-#line 84 "syntax.y"
+#line 86 "syntax.y"
                         {strcpy(sauvType,"REAL");}
-#line 1281 "syntax.tab.c"
+#line 1283 "syntax.tab.c"
     break;
 
   case 13: /* Type: MC_STRING  */
-#line 85 "syntax.y"
+#line 87 "syntax.y"
                         {strcpy(sauvType,"STRING");}
-#line 1287 "syntax.tab.c"
+#line 1289 "syntax.tab.c"
     break;
 
   case 14: /* Type: MC_CHAR  */
-#line 86 "syntax.y"
+#line 88 "syntax.y"
                         {strcpy(sauvType,"CHAR");}
-#line 1293 "syntax.tab.c"
+#line 1295 "syntax.tab.c"
     break;
 
   case 15: /* Instruction: Affectation Instruction  */
-#line 91 "syntax.y"
+#line 93 "syntax.y"
                                       {}
-#line 1299 "syntax.tab.c"
+#line 1301 "syntax.tab.c"
     break;
 
   case 16: /* Instruction: When Instruction  */
-#line 92 "syntax.y"
+#line 94 "syntax.y"
                                                    {}
-#line 1305 "syntax.tab.c"
+#line 1307 "syntax.tab.c"
     break;
 
   case 17: /* Instruction: IF Instruction  */
-#line 93 "syntax.y"
+#line 95 "syntax.y"
                                                  {}
-#line 1311 "syntax.tab.c"
+#line 1313 "syntax.tab.c"
     break;
 
   case 18: /* Instruction: While Instruction  */
-#line 94 "syntax.y"
+#line 96 "syntax.y"
                                                  {}
-#line 1317 "syntax.tab.c"
+#line 1319 "syntax.tab.c"
     break;
 
   case 22: /* $@2: %empty  */
-#line 102 "syntax.y"
+#line 104 "syntax.y"
             { if(routinIdfDeclar((yyvsp[0].str)) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",(yyvsp[0].str)); }
-#line 1323 "syntax.tab.c"
-    break;
-
-  case 24: /* Expression: Expression MC_ADD T  */
-#line 105 "syntax.y"
-                                {printf("expression\n");}
-#line 1329 "syntax.tab.c"
+#line 1325 "syntax.tab.c"
     break;
 
   case 30: /* F: MC_IDF  */
-#line 113 "syntax.y"
+#line 115 "syntax.y"
          { if(routinIdfDeclar((yyvsp[0].str)) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",(yyvsp[0].str)); }
-#line 1335 "syntax.tab.c"
+#line 1331 "syntax.tab.c"
     break;
 
   case 32: /* F: L_PAREN Expression R_PAREN  */
-#line 115 "syntax.y"
+#line 117 "syntax.y"
                               {}
-#line 1341 "syntax.tab.c"
+#line 1337 "syntax.tab.c"
     break;
 
   case 43: /* Condition: Expression OP_COND Expression  */
-#line 144 "syntax.y"
+#line 146 "syntax.y"
                                        {
     printf("condition: \n");
 }
-#line 1349 "syntax.tab.c"
+#line 1345 "syntax.tab.c"
     break;
 
   case 48: /* IF: B Condition R_PAREN  */
-#line 158 "syntax.y"
+#line 160 "syntax.y"
                       {}
-#line 1355 "syntax.tab.c"
+#line 1351 "syntax.tab.c"
     break;
 
   case 49: /* B: C L_PAREN  */
-#line 160 "syntax.y"
+#line 162 "syntax.y"
             {}
-#line 1361 "syntax.tab.c"
+#line 1357 "syntax.tab.c"
     break;
 
   case 50: /* C: D Instruction MC_IF  */
-#line 163 "syntax.y"
+#line 165 "syntax.y"
                        {}
-#line 1367 "syntax.tab.c"
+#line 1363 "syntax.tab.c"
     break;
 
   case 51: /* D: MC_EXECUTE  */
-#line 164 "syntax.y"
+#line 166 "syntax.y"
              {/*aller a l'evaluation de la condition       // insererQUADR("BR","","","");*/}
-#line 1373 "syntax.tab.c"
+#line 1369 "syntax.tab.c"
     break;
 
   case 52: /* While: AA R_BRACE MC_SEMI  */
-#line 169 "syntax.y"
+#line 171 "syntax.y"
                          {}
-#line 1379 "syntax.tab.c"
+#line 1375 "syntax.tab.c"
     break;
 
   case 53: /* AA: BB R_PAREN MC_EXECUTE L_BRACE Instruction  */
-#line 171 "syntax.y"
+#line 173 "syntax.y"
                                              {}
-#line 1385 "syntax.tab.c"
+#line 1381 "syntax.tab.c"
     break;
 
   case 54: /* BB: CC Condition  */
-#line 174 "syntax.y"
+#line 176 "syntax.y"
                 {}
-#line 1391 "syntax.tab.c"
+#line 1387 "syntax.tab.c"
     break;
 
   case 55: /* CC: MC_WHILE L_PAREN  */
-#line 177 "syntax.y"
+#line 179 "syntax.y"
                     {}
-#line 1397 "syntax.tab.c"
+#line 1393 "syntax.tab.c"
     break;
 
 
-#line 1401 "syntax.tab.c"
+#line 1397 "syntax.tab.c"
 
       default: break;
     }
@@ -1591,13 +1587,14 @@ yyreturn:
   return yyresult;
 }
 
-#line 180 "syntax.y"
+#line 182 "syntax.y"
 
 
 void yyerror(char *s) {
    fprintf(stderr, "%s\n", s);
 }
  int main(int argc,char **argv){
+     initialize();
      yyin = fopen( "programme.txt", "r" );
     if (yyin==NULL) 
             printf("ERROR  \n");
@@ -1605,6 +1602,7 @@ void yyerror(char *s) {
             yyparse();
             afficher();
             afficherDecl();
+            printQuadreplet();
      }
       return 0;
 }

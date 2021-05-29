@@ -2,5 +2,8 @@ CODE Programme
 CONST N:=20;
 REAL M,X,A;
 START
-W:=20;
+M:=20;
+WHEN (X>=A)DO{
+    M:=50;
+};
 END.
