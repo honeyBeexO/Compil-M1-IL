@@ -13,6 +13,7 @@
     void insererType(char entites[], char typ[], char nature[], int taille);
 
     char sauvType[20];
+    int quadNumber = 0;
 %}
 
 %union{
@@ -91,17 +92,20 @@ Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}
 
 
 Instruction : Affectation Instruction {}
-            | When Instruction                     {}
-            | IF Instruction                     {}
-            | While Instruction                  {}
-            | Expression MC_SEMI Instruction
+            | When Instruction               {}
+            | IF Instruction                 {}
+            | While Instruction              {}
+            | Expression MC_SEMI Instruction {}
             |
 ;
 
 
 Affectation: BBB Expression MC_SEMI
 ;
-BBB: MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); } MC_AFFECT
+BBB: MC_IDF MC_AFFECT{
+    if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
+    insertQuadreplet(":=","","",$1);
+}
 ;
 
 Expression : Expression MC_ADD T
@@ -118,21 +122,23 @@ F:MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! 
 ;
 
 
-Value:INTEGER_CONST
-|REAL_CONST
-|STRING_CONST 
-|CHAR_CONST
+Value:INTEGER_CONST {char *s; asprintf(&s, "%i", $1);updateQuadreplet(quadNumber,1,s);free(s);}
+|REAL_CONST {char *s; asprintf(&s, "%f", $1);updateQuadreplet(quadNumber,1,s);free(s);}
+|STRING_CONST {updateQuadreplet(quadNumber,1,$1);}
+|CHAR_CONST {char *s; asprintf(&s, "%c", $1); updateQuadreplet(quadNumber,1,s);free(s);}
 ;
 
-/*----------- le grammaire modifiee de : <Condition>  -------------------------------
- * La condition peut etre de la forme expression Operateur_Logique Expression
- * donc on insere les quad de la partie droite de la condition puis on empile le resultat
- * de ces quad c.a.d le sommet de pile sera soit un idf | ValeurConst | nomTemporair
+/*----------- le grammaire modifiee de : <Condition>  --------
+ * La condition peut etre de la forme expression 
+ * Operateur_Logique Expression
+ * donc on insere les quad de la partie droite de 
+ * la condition puis on empile le resultat
+ * de ces quad c.a.d le sommet de pile sera 
+ * soit un idf | ValeurConst | nomTemporair
  * puis de meme pour la partie gauche de la condition
  * 
- * 
       Condition:Expression OP_COND Expression
-;*/
+*/
 
 OP_COND: MC_SUP_EQUAL    
        | MC_INF_EQUAL    
@@ -143,22 +149,23 @@ OP_COND: MC_SUP_EQUAL
 ;
 
 
-Condition:Expression OP_COND Expression{
-    printf("condition: \n");
-} 
+Condition:Expression OP_COND Expression{} 
 ;
 
 
 /*------------- EXECUTE | <Instructions> |IF | <Condition> |-------*/
 
-When: MC_WHEN L_PAREN Condition R_PAREN MC_DO L_BRACE Instruction R_BRACE X2
+When: MC_WHEN L_PAREN Condition {
+    insertQuadreplet("BZ","","","");
+    printf("qc= %i - quadNumber= %i \n",qc,quadNumber);
+} R_PAREN MC_DO L_BRACE Instruction R_BRACE X2
 ; 
 X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI
 | MC_SEMI
 |
 ;
-IF:B Condition R_PAREN{};
 
+IF:B Condition R_PAREN{};
 B:C L_PAREN {}
 ;
 
@@ -180,6 +187,7 @@ CC:MC_WHILE L_PAREN {}
 
 
 %%
+
 
 void yyerror(char *s) {
    fprintf(stderr, "%s\n", s);
