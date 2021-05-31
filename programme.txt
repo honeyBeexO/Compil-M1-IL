@@ -4,6 +4,8 @@ REAL M,X,A;
 START
 M:=20;
 WHEN (X>=A)DO{
-    M:=50;
+    WHILE(X<=A)EXECUTE{
+        M:=50;
+    };
 };
 END.
