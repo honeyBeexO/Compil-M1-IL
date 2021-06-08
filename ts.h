@@ -86,7 +86,25 @@ void inserer(char *nom_entite, char *code_entite, int position)
         }
     }
 }
+extern char *getType(char *idf)
+{
+    int i = rechercher(idf);
+    if (i != -1)
+    {
+        entite *ptr = TableHachage[i].tete;
 
+        while ((ptr != NULL))
+        {
+            if (strcmp(ptr->nom, idf) == 0)
+            {
+                return ptr->type;
+            }
+            else
+                ptr = ptr->svt;
+        }
+    }
+    return NULL;
+}
 void typeDeIdf(char *out, char *idf)
 {
 

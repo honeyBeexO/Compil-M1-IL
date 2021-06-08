@@ -2,7 +2,7 @@ CODE Programme
 CONST N:=20;
 REAL M,X,A;
 START
-M:=20;
+M:= N;
 WHEN (X>=A)DO{
     WHILE(X<=A)EXECUTE{
         M:=50;

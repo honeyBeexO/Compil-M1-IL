@@ -11,7 +11,7 @@
     void afficher();
     int doubleDeclaration(char entites[]);
     void insererType(char entites[], char typ[], char nature[], int taille);
-
+    char *getType(char *idf);
     char sauvType[20];
     int quadNumber = 0;
 %}
@@ -59,7 +59,15 @@ Variable:Type list_idf MC_SEMI
 ;
 
 Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
-            insererType($2,"Constante","Const",1);
+     if(doubleDeclaration($2) == 0){
+        inserIdfDecl($2);
+        insererType($2,"Constante","Const",1);
+        empiler($1);
+
+    }else{
+        printf("ERROR semantique: Double declaration DE CONSTANTE %s\n",$2);
+    }
+            
 }
 ;
 
@@ -67,6 +75,7 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
 list_idf: MC_IDF {
     if(doubleDeclaration($1) == 0){
         inserIdfDecl($1);
+        empiler($1);
         insererType($1,sauvType,"Variable",1);
     }else{
         printf("ERROR semantique: Double declaration\n");
@@ -103,8 +112,12 @@ Instruction : Affectation Instruction {}
 Affectation: BBB Expression MC_SEMI
 ;
 BBB: MC_IDF MC_AFFECT{
-    if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
-    insertQuadreplet(":=","","",$1);
+    if(routinIdfDeclar($1) == 0){
+        printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
+    }else{
+       printf("type de %s est %s\n",$1, getType($1));
+       insertQuadreplet(":=","","",$1);
+    }
 }
 ;
 
@@ -122,8 +135,14 @@ F:MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! 
 ;
 
 
-Value:INTEGER_CONST {char *s; asprintf(&s, "%i", $1);updateQuadreplet(quadNumber,1,s);free(s);}
-|REAL_CONST {char *s; asprintf(&s, "%f", $1);updateQuadreplet(quadNumber,1,s);free(s);}
+Value:INTEGER_CONST {
+    char *s; asprintf(&s, "%i", $1);
+    updateQuadreplet(quadNumber,1,s);free(s);
+    }
+|REAL_CONST {
+    char *s; asprintf(&s, "%f", $1);
+    updateQuadreplet(quadNumber,1,s);free(s);
+    }
 |STRING_CONST {updateQuadreplet(quadNumber,1,$1);}
 |CHAR_CONST {char *s; asprintf(&s, "%c", $1); updateQuadreplet(quadNumber,1,s);free(s);}
 ;
