@@ -14,6 +14,12 @@
     char *getType(char *idf);
     char sauvType[20];
     int quadNumber = 0;
+
+    char op1[10],op2[10];
+    int isFisrtTime = 0;
+    char typeDroite[10];
+    char typeGauche[10];
+    int quadAffectNum = 0;
 %}
 
 %union{
@@ -65,7 +71,7 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
         empiler($1);
 
     }else{
-        printf("ERROR semantique: Double declaration DE CONSTANTE %s\n",$2);
+        printf("ERROR: Double declaration DE CONSTANTE %s\n",$2);
     }
             
 }
@@ -78,7 +84,7 @@ list_idf: MC_IDF {
         empiler($1);
         insererType($1,sauvType,"Variable",1);
     }else{
-        printf("ERROR semantique: Double declaration\n");
+        printf("ERROR: Double declaration\n");
     }
 }
         |  MC_IDF MC_COMMA {
@@ -87,7 +93,7 @@ list_idf: MC_IDF {
         empiler($1);
         insererType($1,sauvType,"Variable",1);
     }else{
-        printf("ERROR semantique: Double declaration\n");
+        printf("ERROR: Double declaration\n");
     }
 } list_idf {}
 ;
@@ -112,16 +118,25 @@ Instruction : Affectation Instruction {}
 Affectation: BBB Expression MC_SEMI
 ;
 BBB: MC_IDF MC_AFFECT{
+    char *type = getType($1);
     if(routinIdfDeclar($1) == 0){
-        printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
+        printf("\n ERREUR IDF %s NON DECLAREE ! \n",$1); 
     }else{
        printf("type de %s est %s\n",$1, getType($1));
+       quadAffectNum = qc; //le num de quad courant
        insertQuadreplet(":=","","",$1);
+       strcpy(typeGauche,type);
     }
 }
 ;
 
-Expression : Expression MC_ADD T
+Expression : Expression MC_ADD T{
+    printf("ok\n");
+    printf("op1= %s op2= %s\n",op1,op2);
+    isFisrtTime=0;
+    insertQuadreplet("+",op1,op2,"t1");
+    updateQuadreplet(quadAffectNum,1,"t1");
+}
            | Expression MC_SUB T
            | T
 ;
@@ -129,35 +144,53 @@ T: T MC_MUL F
  | T MC_DIV F
  | F
 ;
-F:MC_IDF { if(routinIdfDeclar($1) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); }
+F:MC_IDF {
+     if(routinIdfDeclar($1) == 0) 
+     printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
+     char *type = getType($1);
+     printf("Type %s - %s\n",$1,type);
+     if(isFisrtTime == 0){
+         strcpy(typeDroite,type);
+         strcpy(op1,strdup($1));
+         isFisrtTime=1;
+     }else{
+         if(strcmp(typeDroite,type) == 0){
+             printf("Type incompatible\n");
+         }
+         strcpy(op2,$1);
+     }
+     }
  | Value
  | L_PAREN Expression R_PAREN {}
 ;
 
 
 Value:INTEGER_CONST {
-    char *s; asprintf(&s, "%i", $1);
-    updateQuadreplet(quadNumber,1,s);free(s);
+    if(quadNumber != 0){
+        char *s; 
+    asprintf(&s, "%i", $1);
+    updateQuadreplet(quadNumber,1,s);
+    free(s);
+    }
     }
 |REAL_CONST {
-    char *s; asprintf(&s, "%f", $1);
-    updateQuadreplet(quadNumber,1,s);free(s);
+    if(quadNumber != 0){
+    char *s; 
+    asprintf(&s, "%f", $1);
+    updateQuadreplet(quadNumber,1,s);
+    free(s);}
     }
-|STRING_CONST {updateQuadreplet(quadNumber,1,$1);}
-|CHAR_CONST {char *s; asprintf(&s, "%c", $1); updateQuadreplet(quadNumber,1,s);free(s);}
+|STRING_CONST {
+    updateQuadreplet(quadNumber,1,$1);
+    }
+|CHAR_CONST {
+    char *s; 
+    asprintf(&s, "%c", $1); 
+    updateQuadreplet(quadNumber,1,s);
+    free(s);
+    }
 ;
 
-/*----------- le grammaire modifiee de : <Condition>  --------
- * La condition peut etre de la forme expression 
- * Operateur_Logique Expression
- * donc on insere les quad de la partie droite de 
- * la condition puis on empile le resultat
- * de ces quad c.a.d le sommet de pile sera 
- * soit un idf | ValeurConst | nomTemporair
- * puis de meme pour la partie gauche de la condition
- * 
-      Condition:Expression OP_COND Expression
-*/
 
 OP_COND: MC_SUP_EQUAL    
        | MC_INF_EQUAL    

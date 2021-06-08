@@ -126,7 +126,7 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 [ \t]
 [ \t\r\f]+ /* eat up whitespace */
 \n lineNumber++;
-. { printf("Error lexical a la ligne: %d\n",lineNumber);
+. { printf("Error Lexical a la ligne: %d\n",lineNumber);
     yyterminate();
 }
 %%

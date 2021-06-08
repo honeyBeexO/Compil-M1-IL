@@ -170,6 +170,12 @@
     char sauvType[20];
     int quadNumber = 0;
 
+    char op1[10],op2[10];
+    int isFisrtTime = 0;
+    char typeDroite[10];
+    char typeGauche[10];
+    int quadAffectNum = 0;
+
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -191,7 +197,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "syntax.y"
+#line 25 "syntax.y"
 {
         int integer;
         float real;
@@ -199,7 +205,7 @@ typedef union YYSTYPE
         char myChar;
 }
 /* Line 193 of yacc.c.  */
-#line 203 "syntax.tab.c"
+#line 209 "syntax.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -212,7 +218,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 216 "syntax.tab.c"
+#line 222 "syntax.tab.c"
 
 #ifdef short
 # undef short
@@ -518,12 +524,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    47,    47,    53,    54,    55,    58,    61,    75,    84,
-      84,    95,    96,    97,    98,   103,   104,   105,   106,   107,
-     108,   112,   114,   125,   126,   127,   129,   130,   131,   133,
-     134,   135,   139,   143,   147,   148,   163,   164,   165,   166,
-     167,   168,   172,   178,   178,   183,   184,   185,   188,   189,
-     192,   193,   198,   200,   203,   206
+       0,    53,    53,    59,    60,    61,    64,    67,    81,    90,
+      90,   101,   102,   103,   104,   109,   110,   111,   112,   113,
+     114,   118,   120,   133,   140,   141,   143,   144,   145,   147,
+     163,   164,   168,   176,   183,   186,   195,   196,   197,   198,
+     199,   200,   204,   210,   210,   215,   216,   217,   220,   221,
+     224,   225,   230,   232,   235,   238
 };
 #endif
 
@@ -1501,7 +1507,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 47 "syntax.y"
+#line 53 "syntax.y"
     {
       printf("\n --- Votre Programme a compilé correct --- \n");
       YYACCEPT;
@@ -1509,7 +1515,7 @@ yyreduce:
     break;
 
   case 7:
-#line 61 "syntax.y"
+#line 67 "syntax.y"
     {
      if(doubleDeclaration((yyvsp[(2) - (5)].str)) == 0){
         inserIdfDecl((yyvsp[(2) - (5)].str));
@@ -1517,144 +1523,186 @@ yyreduce:
         empiler((yyvsp[(1) - (5)].str));
 
     }else{
-        printf("ERROR semantique: Double declaration DE CONSTANTE %s\n",(yyvsp[(2) - (5)].str));
+        printf("ERROR: Double declaration DE CONSTANTE %s\n",(yyvsp[(2) - (5)].str));
     }
             
 ;}
     break;
 
   case 8:
-#line 75 "syntax.y"
+#line 81 "syntax.y"
     {
     if(doubleDeclaration((yyvsp[(1) - (1)].str)) == 0){
         inserIdfDecl((yyvsp[(1) - (1)].str));
         empiler((yyvsp[(1) - (1)].str));
         insererType((yyvsp[(1) - (1)].str),sauvType,"Variable",1);
     }else{
-        printf("ERROR semantique: Double declaration\n");
+        printf("ERROR: Double declaration\n");
     }
 ;}
     break;
 
   case 9:
-#line 84 "syntax.y"
+#line 90 "syntax.y"
     {
     if(doubleDeclaration((yyvsp[(1) - (2)].str)) == 0){
         inserIdfDecl((yyvsp[(1) - (2)].str));
         empiler((yyvsp[(1) - (2)].str));
         insererType((yyvsp[(1) - (2)].str),sauvType,"Variable",1);
     }else{
-        printf("ERROR semantique: Double declaration\n");
+        printf("ERROR: Double declaration\n");
     }
 ;}
     break;
 
   case 10:
-#line 92 "syntax.y"
+#line 98 "syntax.y"
     {;}
     break;
 
   case 11:
-#line 95 "syntax.y"
+#line 101 "syntax.y"
     {strcpy(sauvType,"INTEGER");;}
     break;
 
   case 12:
-#line 96 "syntax.y"
+#line 102 "syntax.y"
     {strcpy(sauvType,"REAL");;}
     break;
 
   case 13:
-#line 97 "syntax.y"
+#line 103 "syntax.y"
     {strcpy(sauvType,"STRING");;}
     break;
 
   case 14:
-#line 98 "syntax.y"
+#line 104 "syntax.y"
     {strcpy(sauvType,"CHAR");;}
     break;
 
   case 15:
-#line 103 "syntax.y"
+#line 109 "syntax.y"
     {;}
     break;
 
   case 16:
-#line 104 "syntax.y"
+#line 110 "syntax.y"
     {;}
     break;
 
   case 17:
-#line 105 "syntax.y"
+#line 111 "syntax.y"
     {;}
     break;
 
   case 18:
-#line 106 "syntax.y"
+#line 112 "syntax.y"
     {;}
     break;
 
   case 19:
-#line 107 "syntax.y"
+#line 113 "syntax.y"
     {;}
     break;
 
   case 22:
-#line 114 "syntax.y"
+#line 120 "syntax.y"
     {
+    char *type = getType((yyvsp[(1) - (2)].str));
     if(routinIdfDeclar((yyvsp[(1) - (2)].str)) == 0){
-        printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",(yyvsp[(1) - (2)].str)); 
+        printf("\n ERREUR IDF %s NON DECLAREE ! \n",(yyvsp[(1) - (2)].str)); 
     }else{
        printf("type de %s est %s\n",(yyvsp[(1) - (2)].str), getType((yyvsp[(1) - (2)].str)));
+       quadAffectNum = qc; //le num de quad courant
+       insertQuadreplet(":=","","",(yyvsp[(1) - (2)].str));
+       strcpy(typeGauche,type);
     }
-    
-    insertQuadreplet(":=","","",(yyvsp[(1) - (2)].str));
+;}
+    break;
+
+  case 23:
+#line 133 "syntax.y"
+    {
+    printf("ok\n");
+    printf("op1= %s op2= %s\n",op1,op2);
+    isFisrtTime=0;
+    insertQuadreplet("+",op1,op2,"t1");
+    updateQuadreplet(quadAffectNum,1,"t1");
 ;}
     break;
 
   case 29:
-#line 133 "syntax.y"
-    { if(routinIdfDeclar((yyvsp[(1) - (1)].str)) == 0) printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",(yyvsp[(1) - (1)].str)); ;}
+#line 147 "syntax.y"
+    {
+     if(routinIdfDeclar((yyvsp[(1) - (1)].str)) == 0) 
+     printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",(yyvsp[(1) - (1)].str)); 
+     char *type = getType((yyvsp[(1) - (1)].str));
+     printf("Type %s - %s\n",(yyvsp[(1) - (1)].str),type);
+     if(isFisrtTime == 0){
+         strcpy(typeDroite,type);
+         strcpy(op1,strdup((yyvsp[(1) - (1)].str)));
+         isFisrtTime=1;
+     }else{
+         if(strcmp(typeDroite,type) == 0){
+             printf("Type incompatible\n");
+         }
+         strcpy(op2,(yyvsp[(1) - (1)].str));
+     }
+     ;}
     break;
 
   case 31:
-#line 135 "syntax.y"
+#line 164 "syntax.y"
     {;}
     break;
 
   case 32:
-#line 139 "syntax.y"
+#line 168 "syntax.y"
     {
-    char *s; asprintf(&s, "%i", (yyvsp[(1) - (1)].integer));
-    updateQuadreplet(quadNumber,1,s);free(s);
+    if(quadNumber != 0){
+        char *s; 
+    asprintf(&s, "%i", (yyvsp[(1) - (1)].integer));
+    updateQuadreplet(quadNumber,1,s);
+    free(s);
+    }
     ;}
     break;
 
   case 33:
-#line 143 "syntax.y"
+#line 176 "syntax.y"
     {
-    char *s; asprintf(&s, "%f", (yyvsp[(1) - (1)].real));
-    updateQuadreplet(quadNumber,1,s);free(s);
+    if(quadNumber != 0){
+    char *s; 
+    asprintf(&s, "%f", (yyvsp[(1) - (1)].real));
+    updateQuadreplet(quadNumber,1,s);
+    free(s);}
     ;}
     break;
 
   case 34:
-#line 147 "syntax.y"
-    {updateQuadreplet(quadNumber,1,(yyvsp[(1) - (1)].str));;}
+#line 183 "syntax.y"
+    {
+    updateQuadreplet(quadNumber,1,(yyvsp[(1) - (1)].str));
+    ;}
     break;
 
   case 35:
-#line 148 "syntax.y"
-    {char *s; asprintf(&s, "%c", (yyvsp[(1) - (1)].myChar)); updateQuadreplet(quadNumber,1,s);free(s);;}
+#line 186 "syntax.y"
+    {
+    char *s; 
+    asprintf(&s, "%c", (yyvsp[(1) - (1)].myChar)); 
+    updateQuadreplet(quadNumber,1,s);
+    free(s);
+    ;}
     break;
 
   case 42:
-#line 172 "syntax.y"
+#line 204 "syntax.y"
     {;}
     break;
 
   case 43:
-#line 178 "syntax.y"
+#line 210 "syntax.y"
     {
     insertQuadreplet("BZ","","","");
     printf("qc= %i - quadNumber= %i \n",qc,quadNumber);
@@ -1662,48 +1710,48 @@ yyreduce:
     break;
 
   case 48:
-#line 188 "syntax.y"
+#line 220 "syntax.y"
     {;}
     break;
 
   case 49:
-#line 189 "syntax.y"
+#line 221 "syntax.y"
     {;}
     break;
 
   case 50:
-#line 192 "syntax.y"
+#line 224 "syntax.y"
     {;}
     break;
 
   case 51:
-#line 193 "syntax.y"
+#line 225 "syntax.y"
     {/*aller a l'evaluation de la condition       // insererQUADR("BR","","","");*/;}
     break;
 
   case 52:
-#line 198 "syntax.y"
+#line 230 "syntax.y"
     {;}
     break;
 
   case 53:
-#line 200 "syntax.y"
+#line 232 "syntax.y"
     {;}
     break;
 
   case 54:
-#line 203 "syntax.y"
+#line 235 "syntax.y"
     {;}
     break;
 
   case 55:
-#line 206 "syntax.y"
+#line 238 "syntax.y"
     {;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1707 "syntax.tab.c"
+#line 1755 "syntax.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1917,7 +1965,7 @@ yyreturn:
 }
 
 
-#line 209 "syntax.y"
+#line 241 "syntax.y"
 
 
 

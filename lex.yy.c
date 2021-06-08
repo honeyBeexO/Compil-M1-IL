@@ -1358,7 +1358,7 @@ lineNumber++;
 case 42:
 YY_RULE_SETUP
 #line 129 "lexical.l"
-{ printf("Error lexical a la ligne: %d\n",lineNumber);
+{ printf("Error Lexical a la ligne: %d\n",lineNumber);
     yyterminate();
 }
 	YY_BREAK

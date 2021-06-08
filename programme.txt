@@ -1,11 +1,6 @@
 CODE Programme
 CONST N:=20;
-REAL M,X,A;
+REAL M,X,A,B,V;
 START
-M:= N;
-WHEN (X>=A)DO{
-    WHILE(X<=A)EXECUTE{
-        M:=50;
-    };
-};
+A := M + X + V;
 END.
