@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 typedef struct element
 {
     char *inf;
@@ -11,10 +10,8 @@ typedef struct element
 typedef cellule *Pile;
 
 extern int error = 0;
-Pile _pile = NULL;
-Pile _postFixed = NULL;
-
-Pile initpile() { return NULL; }
+extern Pile _pile = NULL;
+extern Pile _postFixed = NULL;
 
 extern int pileVide(Pile _p)
 {
@@ -48,26 +45,17 @@ extern void push(Pile *p, char x[])
 
 extern char *pop(Pile *p)
 {
-
     Pile temp;
     temp = *p;
     char *x = "";
     if (!pileVide(temp))
     {
         x = (*p)->inf;
-        //printf("pile : info a depiler %s\n",x);
         *p = (*p)->suivant;
-
         free(temp);
         return x;
     }
     return "";
-}
-
-void initializerVar(char **str1, char **str2)
-{
-    *(str1) = "";
-    *(str2) = "";
 }
 
 extern int getSize(Pile *p)
@@ -81,7 +69,7 @@ extern int getSize(Pile *p)
     }
     return taille;
 }
-extern void printPile(Pile *p)
+extern void printStack(Pile *p)
 {
     Pile temp = *p;
     while (!pileVide(temp))
@@ -106,6 +94,18 @@ extern int poids(char op)
         return 3;
     case '-':
         return 3;
+    case '!':
+        return 5; // !=
+    case '>':
+        return 2;
+    case '<':
+        return 2;
+    case '=':
+        return 2;
+    case 'G':
+        return 2; // >=
+    case 'L':
+        return 2; // <=
     default:
         return 0; // ce n'est pas un oprerateur
     }
@@ -188,13 +188,14 @@ extern void toPostfix(Pile *_expression, Pile *_result)
     _postFixed = s;
 }
 
-const char *generateTemporaryName(int number)
+extern char *generateTemporaryName(int number)
 {
     char *buf = malloc(sizeof(char *));
     snprintf(buf, 4, "t%d", number); // puts string into buffer
-    free(buf);
-    return buf;
+    //free(buf);
+    return strdup(buf);
 }
+
 int isCompatible(const char *type1, const char *type2)
 {
 
@@ -214,7 +215,6 @@ extern int compatibilityTest(Pile *_pile)
 {
 
     Pile temp = *_pile;
-    printPile(&temp);
     char *previous = pop(&temp);
     while ((!pileVide(temp)) && (isCompatible(previous, sommetPile(temp))))
     {
@@ -226,7 +226,6 @@ extern int compatibilityTest(Pile *_pile)
     }
     return 0;
 }
-
 int main(int argc, char const *argv[])
 {
     Pile test = NULL;

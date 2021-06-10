@@ -91,6 +91,18 @@ extern int poids(char op)
         return 3;
     case '-':
         return 3;
+    case '!':
+        return 5; // !=
+    case '>':
+        return 2;
+    case '<':
+        return 2;
+    case '=':
+        return 2;
+    case 'G':
+        return 2; // >=
+    case 'L':
+        return 2; // <=
     default:
         return 0; // ce n'est pas un oprerateur
     }
