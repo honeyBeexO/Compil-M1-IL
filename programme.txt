@@ -2,5 +2,7 @@ CODE Programme
 REAL M,X,A,B,V,C,D;
 STRING L;
 START
-A:= C / F;
+    WHILE(A > B) EXECUTE {
+        X := M * D;
+    };
 END.

@@ -590,8 +590,8 @@ static const yytype_int16 yyrline[] =
      106,   117,   118,   119,   120,   125,   126,   127,   128,   129,
      133,   171,   189,   189,   190,   190,   191,   193,   193,   194,
      194,   195,   197,   208,   209,   214,   221,   229,   236,   246,
-     247,   248,   249,   250,   251,   255,   267,   267,   272,   273,
-     274,   279,   281,   284,   287
+     247,   248,   249,   250,   251,   255,   262,   262,   267,   268,
+     269,   274,   276,   279,   282
 };
 #endif
 
@@ -1514,53 +1514,84 @@ yyreduce:
 #line 1515 "syntax.tab.c"
     break;
 
-  case 45: /* Condition: Expression OP_COND Expression  */
-#line 255 "syntax.y"
-                                       {
-    printf("pile de l'expression: \n");
-    printStack(&_pile);
-    toPostfix(&_pile,&_postFixed);
-    printf("pile de l'expression postifxee: \n");
-    printStack(&_postFixed);
-}
+  case 39: /* OP_COND: MC_SUP_EQUAL  */
+#line 246 "syntax.y"
+                     {push(&_pile,"G");}
+#line 1521 "syntax.tab.c"
+    break;
+
+  case 40: /* OP_COND: MC_INF_EQUAL  */
+#line 247 "syntax.y"
+                     {push(&_pile,"L");}
 #line 1527 "syntax.tab.c"
     break;
 
+  case 41: /* OP_COND: MC_STRICT_SUP  */
+#line 248 "syntax.y"
+                      {push(&_pile,">");}
+#line 1533 "syntax.tab.c"
+    break;
+
+  case 42: /* OP_COND: MC_STRICT_INF  */
+#line 249 "syntax.y"
+                      {push(&_pile,"<");}
+#line 1539 "syntax.tab.c"
+    break;
+
+  case 43: /* OP_COND: MC_EQUAL  */
+#line 250 "syntax.y"
+                 {push(&_pile,"=");}
+#line 1545 "syntax.tab.c"
+    break;
+
+  case 44: /* OP_COND: MC_NOT_EQUAL  */
+#line 251 "syntax.y"
+                     {push(&_pile,"!");}
+#line 1551 "syntax.tab.c"
+    break;
+
+  case 45: /* Condition: Expression OP_COND Expression  */
+#line 255 "syntax.y"
+                                       {
+}
+#line 1558 "syntax.tab.c"
+    break;
+
   case 46: /* $@6: %empty  */
-#line 267 "syntax.y"
+#line 262 "syntax.y"
                                 {
     insertQuadreplet("BZ","","","");
     printf("qc= %i - quadNumber= %i \n",qc,quadNumber);
 }
-#line 1536 "syntax.tab.c"
+#line 1567 "syntax.tab.c"
     break;
 
   case 51: /* While: AA R_BRACE MC_SEMI  */
-#line 279 "syntax.y"
+#line 274 "syntax.y"
                          {}
-#line 1542 "syntax.tab.c"
+#line 1573 "syntax.tab.c"
     break;
 
   case 52: /* AA: BB R_PAREN MC_EXECUTE L_BRACE Instruction  */
-#line 281 "syntax.y"
+#line 276 "syntax.y"
                                              {}
-#line 1548 "syntax.tab.c"
+#line 1579 "syntax.tab.c"
     break;
 
   case 53: /* BB: CC Condition  */
-#line 284 "syntax.y"
+#line 279 "syntax.y"
                 {}
-#line 1554 "syntax.tab.c"
+#line 1585 "syntax.tab.c"
     break;
 
   case 54: /* CC: MC_WHILE L_PAREN  */
-#line 287 "syntax.y"
+#line 282 "syntax.y"
                     {}
-#line 1560 "syntax.tab.c"
+#line 1591 "syntax.tab.c"
     break;
 
 
-#line 1564 "syntax.tab.c"
+#line 1595 "syntax.tab.c"
 
       default: break;
     }
@@ -1754,7 +1785,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 290 "syntax.y"
+#line 285 "syntax.y"
 
 
 

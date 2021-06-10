@@ -243,21 +243,16 @@ Value:INTEGER_CONST {
 ;
 
 
-OP_COND: MC_SUP_EQUAL    
-       | MC_INF_EQUAL    
-       | MC_STRICT_SUP   
-       | MC_STRICT_INF   
-       | MC_EQUAL       
-       | MC_NOT_EQUAL    
+OP_COND: MC_SUP_EQUAL{push(&_pile,"G");}    
+       | MC_INF_EQUAL{push(&_pile,"L");}    
+       | MC_STRICT_SUP{push(&_pile,">");}   
+       | MC_STRICT_INF{push(&_pile,"<");}   
+       | MC_EQUAL{push(&_pile,"=");}       
+       | MC_NOT_EQUAL{push(&_pile,"!");}    
 ;
 
 
 Condition:Expression OP_COND Expression{
-    printf("pile de l'expression: \n");
-    printStack(&_pile);
-    toPostfix(&_pile,&_postFixed);
-    printf("pile de l'expression postifxee: \n");
-    printStack(&_postFixed);
 } 
 ;
 
