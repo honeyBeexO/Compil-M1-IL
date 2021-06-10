@@ -6,7 +6,6 @@
       extern int columnNumber = 1; // initialize to 1
       void ret_print(char *token_type);
       extern YYSTYPE yylval;
-      //extern TS *ts;
 
 %}
 
@@ -26,12 +25,11 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 "END" {return MC_END;}
 
 "INTEGER"|"integer"    {
-      printf("int type Reconnu: %s\n",yytext);
       yylval.str = strdup(yytext); 
       return MC_INTEGER;
       }
 "REAL"|"real"  {
-      printf("REAL_CONST Reconnu: %s: \n",yytext); if(strlen(yytext)>20) printf("IDF too long\n");
+      if(strlen(yytext)>20) printf("IDF too long\n");
       yylval.str = strdup(yytext); 
       return MC_REAL;
       }
@@ -40,7 +38,6 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 
 "CONST" {
       yylval.str = strdup(yytext); 
-      printf("CONSTANTE: %s\n",yytext);
       return MC_CONST; 
       }
 
@@ -89,7 +86,6 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
       }else{
             if (valid_int <= 32720 && valid_int>= -32720){
                   yylval.integer = valid_int; 
-                  printf("const int: %d\n",valid_int);
                   return INTEGER_CONST;
       }else{
             printf("entier trop long \n");
@@ -99,13 +95,11 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 
 {REAL_CONST}  {
       yylval.real = atof(yytext); 
-      printf("const real: %f\n",atof(yytext));
       return REAL_CONST; 
       }
 
 {STRING_CONST} {
        yylval.str = strdup(yytext);
-       printf("String CONS: %s\n",strdup(yytext));
       return STRING_CONST; 
       }
 {CHAR_CONST} {

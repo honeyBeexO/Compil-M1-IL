@@ -2,6 +2,5 @@ CODE Programme
 REAL M,X,A,B,V,C,D;
 STRING L;
 START
-M := A + B * C - D;
-A:= L * D;
+A:= C / F;
 END.

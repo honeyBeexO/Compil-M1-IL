@@ -20,12 +20,13 @@
     int columnNumber;
 
     char sauvType[20];
-    int quadNumber = 0;
+    int quadNumber = 0; // Numero du quad courant: it maps to qc inside quad.h
     char *op1="",*op2="";
 
-    int quadAffectNum = 0;          // Pour garder le quadreplet de debut de une affectation
-    int i = 0;                      // Pour generer des noms temporaires
-    
+    int quadAffectNum = 0;                           // Pour garder le quadreplet de debut de une affectation
+    int i = 0;                                       // Pour generer des noms temporaires
+    int hasCompilingErrors = 0;                      // Pour verifier les errors de compilation en fin du Programme
+
     void printStack(Pile *p);
     void push(Pile *p, char x[]);
     char *pop(Pile *p);
@@ -60,12 +61,16 @@
 
 %token <integer>INTEGER_CONST <real>REAL_CONST <str>STRING_CONST <myChar>CHAR_CONST
 
-%token MC_IF MC_WHILE MC_WHEN MC_PROD
+%token MC_WHILE MC_WHEN MC_PROD
 %token MC_EXECUTE MC_DO MC_OTHERWISE
 
 %%
 S:MC_CODE MC_IDF Declaration MC_START Instruction MC_END MC_DOT{
-      printf("\n --- Votre Programme a compilé correct --- \n");
+      if(hasCompilingErrors == 0){
+          printf("\n --- Votre Programme a compilé correct --- \n");
+      }else{
+          printf("\n --- Votre Programme a compilé avec %d errors --- \n", hasCompilingErrors);
+      }
       YYACCEPT;
       }
 ;
@@ -127,8 +132,8 @@ Instruction : Affectation Instruction {}
 
 Affectation: BBB Expression MC_SEMI{
     //Evaluer la compatibilite de l'expression
-    printStack(&_compatible);
     if(!compatibilityTest(&_compatible)){
+        hasCompilingErrors++;
         printf("ERROR DE COMPATIBILITÉ LIGNE -> %d:%d\n",lineNumber,columnNumber);
     }
     //Evaluer les quad de la pille
@@ -161,7 +166,6 @@ Affectation: BBB Expression MC_SEMI{
     }
     /* Mettre a jour le quadreplet de resultats final de l expression*/
     updateQuadreplet(quadAffectNum,1,temporaryName);
-    printStack(&evaluer);
 }
 ;
 BBB: MC_IDF MC_AFFECT{
@@ -173,6 +177,7 @@ BBB: MC_IDF MC_AFFECT{
     push(&_compatible,type);
 
     if(routinIdfDeclar($1) == 0){
+        hasCompilingErrors++;
         printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
     }else{
        quadAffectNum = qc; //le num de quad courant
@@ -186,15 +191,14 @@ Expression : Expression MC_ADD{push(&_pile,"+");} T{}
            | T
 ;
 T: T MC_MUL{push(&_pile,"*");} F
- | T MC_DIV{push(&_pile,"/");} F{
-     printf("DIVISON: \n");
- }
+ | T MC_DIV{push(&_pile,"/");} F{/*tester la division par 0*/}
  | F
 ;
 F:MC_IDF {
     char *type = getType($1);
     push(&_compatible,type);
     if(routinIdfDeclar($1) == 0){        
+            hasCompilingErrors++;
             printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
     }else{
             char *str = strdup($1);

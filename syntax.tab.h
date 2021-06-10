@@ -86,13 +86,12 @@ extern int yydebug;
     REAL_CONST = 287,              /* REAL_CONST  */
     STRING_CONST = 288,            /* STRING_CONST  */
     CHAR_CONST = 289,              /* CHAR_CONST  */
-    MC_IF = 290,                   /* MC_IF  */
-    MC_WHILE = 291,                /* MC_WHILE  */
-    MC_WHEN = 292,                 /* MC_WHEN  */
-    MC_PROD = 293,                 /* MC_PROD  */
-    MC_EXECUTE = 294,              /* MC_EXECUTE  */
-    MC_DO = 295,                   /* MC_DO  */
-    MC_OTHERWISE = 296             /* MC_OTHERWISE  */
+    MC_WHILE = 290,                /* MC_WHILE  */
+    MC_WHEN = 291,                 /* MC_WHEN  */
+    MC_PROD = 292,                 /* MC_PROD  */
+    MC_EXECUTE = 293,              /* MC_EXECUTE  */
+    MC_DO = 294,                   /* MC_DO  */
+    MC_OTHERWISE = 295             /* MC_OTHERWISE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -101,14 +100,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 39 "syntax.y"
+#line 40 "syntax.y"
 
         int integer;
         float real;
         char *str;
         char myChar;
 
-#line 112 "syntax.tab.h"
+#line 111 "syntax.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
