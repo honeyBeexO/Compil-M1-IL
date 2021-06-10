@@ -4,22 +4,40 @@
     #include <string.h>
     #include "pile.h"
     #include "quad.h"
+    #include "util.h"
 
     extern FILE * yyin;
     void yyerror(char *);
     int yylex(void);
+
     void afficher();
     int doubleDeclaration(char entites[]);
     void insererType(char entites[], char typ[], char nature[], int taille);
     char *getType(char *idf);
+
+    // From lexical.l
+    int lineNumber;
+    int columnNumber;
+
     char sauvType[20];
     int quadNumber = 0;
-
-    char op1[10],op2[10];
+    int temp = 0;
+    char *op1="",*op2="";
     int isFisrtTime = 0;
     char typeDroite[10];
     char typeGauche[10];
     int quadAffectNum = 0;
+    int i = 0;
+    
+    void printStack(Pile *p);
+    void push(Pile *p, char x[]);
+    char *pop(Pile *p);
+    void toPostfix(Pile *_expression, Pile *_result);
+    char *generateTemporaryName(int number);
+    int compatibilityTest(Pile *_pile);
+
+    Pile _compatible = NULL;
+    
 %}
 
 %union{
@@ -68,12 +86,9 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
      if(doubleDeclaration($2) == 0){
         inserIdfDecl($2);
         insererType($2,"Constante","Const",1);
-        empiler($1);
-
     }else{
         printf("ERROR: Double declaration DE CONSTANTE %s\n",$2);
     }
-            
 }
 ;
 
@@ -81,7 +96,7 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
 list_idf: MC_IDF {
     if(doubleDeclaration($1) == 0){
         inserIdfDecl($1);
-        empiler($1);
+        /* empiler($1); */
         insererType($1,sauvType,"Variable",1);
     }else{
         printf("ERROR: Double declaration\n");
@@ -90,7 +105,7 @@ list_idf: MC_IDF {
         |  MC_IDF MC_COMMA {
     if(doubleDeclaration($1) == 0){
         inserIdfDecl($1);
-        empiler($1);
+        /* empiler($1); */
         insererType($1,sauvType,"Variable",1);
     }else{
         printf("ERROR: Double declaration\n");
@@ -115,10 +130,53 @@ Instruction : Affectation Instruction {}
 ;
 
 
-Affectation: BBB Expression MC_SEMI
+Affectation: BBB Expression MC_SEMI{
+    //Evaluer la compatibilite de l'expression
+    printStack(&_compatible);
+    if(!compatibilityTest(&_compatible)){
+        printf("ERROR DE COMPATIBILITÉ LIGNE -> %d:%d\n",lineNumber,columnNumber);
+    }
+    //Evaluer les quad de la pille
+    toPostfix(&_pile,&_postFixed);
+
+    Pile evaluer = NULL;
+    Pile temp = _postFixed;
+
+    int size = getSize(&_postFixed);
+    char *T[size];
+    
+    char *x="";
+    char *temporaryName="";
+    while (!pileVide(temp))
+    {
+        x=pop(&temp);
+        if(isOperator(x[0])==0){
+            //Operande
+            push(&evaluer,x);
+        }else{
+            //Operateur
+            op1 = pop(&evaluer);
+            op2 = pop(&evaluer);
+            // result = Operation(op1,op2,x);
+            temporaryName = generateTemporaryName(i); // generate temporaire name
+            push(&evaluer,temporaryName);
+            insertQuadreplet(x,op1,op2,temporaryName);
+            i++;
+        } 
+    }
+    /* Mettre a jour le quadreplet de resultats final de l'expression*/
+    updateQuadreplet(quadAffectNum,1,temporaryName);
+    printStack(&evaluer);
+}
 ;
 BBB: MC_IDF MC_AFFECT{
+    _pile=NULL;
+    _postFixed=NULL;
+    _compatible=NULL;
+
     char *type = getType($1);
+    push(&_compatible,type);
+
     if(routinIdfDeclar($1) == 0){
         printf("\n ERREUR IDF %s NON DECLAREE ! \n",$1); 
     }else{
@@ -130,26 +188,32 @@ BBB: MC_IDF MC_AFFECT{
 }
 ;
 
-Expression : Expression MC_ADD T{
-    printf("ok\n");
-    printf("op1= %s op2= %s\n",op1,op2);
+Expression : Expression MC_ADD{push(&_pile,"+");} T{
     isFisrtTime=0;
-    insertQuadreplet("+",op1,op2,"t1");
-    updateQuadreplet(quadAffectNum,1,"t1");
+    //insertQuadreplet("+",op1,op2,"t1");
+    /* updateQuadreplet(quadAffectNum,1,"t1"); */
 }
-           | Expression MC_SUB T
+           | Expression MC_SUB{{push(&_pile,"-");}} T
            | T
 ;
-T: T MC_MUL F
- | T MC_DIV F
+T: T MC_MUL{push(&_pile,"*");} F
+ | T MC_DIV{push(&_pile,"/");} F{}
  | F
 ;
 F:MC_IDF {
+    char *type = getType($1);
+    push(&_compatible,type);
      if(routinIdfDeclar($1) == 0) 
-     printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
-     char *type = getType($1);
-     printf("Type %s - %s\n",$1,type);
-     if(isFisrtTime == 0){
+        {        
+            printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
+        }else{
+            char *str = strdup($1);
+            push(&_pile,str);
+    }
+    /*
+    char *type = getType($1);
+    printf("Type %s - %s\n",$1,type); 
+    if(isFisrtTime == 0){
          strcpy(typeDroite,type);
          strcpy(op1,strdup($1));
          isFisrtTime=1;
@@ -158,35 +222,49 @@ F:MC_IDF {
              printf("Type incompatible\n");
          }
          strcpy(op2,$1);
-     }
-     }
+     } */
+    }
  | Value
  | L_PAREN Expression R_PAREN {}
+ 
 ;
 
 
 Value:INTEGER_CONST {
-    if(quadNumber != 0){
-        char *s; 
+    char *s; 
     asprintf(&s, "%i", $1);
-    updateQuadreplet(quadNumber,1,s);
-    free(s);
-    }
-    }
-|REAL_CONST {
+    push(&_pile,s);
+    push(&_compatible,"INTEGER");
     if(quadNumber != 0){
+        //updateQuadreplet(quadNumber,1,s);
+    }
+    free(s);
+}
+|REAL_CONST {
     char *s; 
     asprintf(&s, "%f", $1);
-    updateQuadreplet(quadNumber,1,s);
-    free(s);}
+    push(&_pile,s);
+    push(&_compatible,"REAL");
+
+    if(quadNumber != 0){
+        //updateQuadreplet(quadNumber,1,s);
     }
+    free(s);
+
+}
 |STRING_CONST {
-    updateQuadreplet(quadNumber,1,$1);
+    char *s; 
+    asprintf(&s, "%s", $1); 
+    push(&_pile,s);
+    push(&_compatible,"STRING");
+
+    free(s);
     }
 |CHAR_CONST {
     char *s; 
     asprintf(&s, "%c", $1); 
-    updateQuadreplet(quadNumber,1,s);
+    push(&_pile,s);
+    push(&_compatible,"CHAR");
     free(s);
     }
 ;
@@ -201,7 +279,13 @@ OP_COND: MC_SUP_EQUAL
 ;
 
 
-Condition:Expression OP_COND Expression{} 
+Condition:Expression OP_COND Expression{
+    printf("pile de l'expression: \n");
+    printStack(&_pile);
+    toPostfix(&_pile,&_postFixed);
+    printf("pile de l'expression postifxee: \n");
+    printStack(&_postFixed);
+} 
 ;
 
 

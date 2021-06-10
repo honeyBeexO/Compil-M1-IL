@@ -1,6 +1,7 @@
 CODE Programme
-CONST N:=20;
-REAL M,X,A,B,V;
+REAL M,X,A,B,V,C,D;
+STRING L;
 START
-A := M + X + V;
+M := A + B * C - D;
+A:= L * D;
 END.

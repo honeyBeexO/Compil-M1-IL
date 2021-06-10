@@ -141,7 +141,7 @@ void routineModifCst(char *idf)
             {
                 if (strcmp(ptr->nature, "Constante") == 0)
 
-                    printf("la valeur de %d : ne peut pas etre modifi� c'est une constante ", idf);
+                    printf("la valeur de %s : ne peut pas etre modifie c'est une constante ", idf);
             }
             else
                 ptr = ptr->svt;

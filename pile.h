@@ -1,4 +1,3 @@
-
 extern void supprimerTS(char *nom);
 extern int hachage(char *chaine);
 typedef struct pile
@@ -16,17 +15,12 @@ typedef struct idfTemp
 
 pile *p = NULL;
 
-void empiler(char nom[])
+char *sommetDePile(pile *p)
 {
-    pile *ptr = (pile *)malloc(sizeof(pile));
-    strcpy(ptr->nom, nom);
-    pile *sommet = p;
-    p = ptr;
-    ptr->svt = sommet;
-    sommet = NULL;
-    ptr = NULL;
+    if (p != NULL)
+        return p->nom;
+    return NULL;
 }
-
 char *depiler()
 {
     char *ch;
@@ -97,4 +91,23 @@ void afficherDecl()
 
         ptr = ptr->svt;
     }
+}
+void printPile(pile *input)
+{
+    pile *ptr = (pile *)malloc(sizeof(pile));
+    ptr = input;
+
+    while (ptr != NULL)
+    {
+        printf("\t| %p | %10s | %10p |\n", ptr, ptr->nom, ptr->svt);
+        ptr = ptr->svt;
+    }
+    free(ptr);
+}
+
+int isEmpty(pile *p)
+{
+    if (p == NULL)
+        return 1;
+    return 0;
 }
