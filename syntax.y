@@ -21,13 +21,10 @@
 
     char sauvType[20];
     int quadNumber = 0;
-    int temp = 0;
     char *op1="",*op2="";
-    int isFisrtTime = 0;
-    char typeDroite[10];
-    char typeGauche[10];
-    int quadAffectNum = 0;
-    int i = 0;
+
+    int quadAffectNum = 0;          // Pour garder le quadreplet de debut de une affectation
+    int i = 0;                      // Pour generer des noms temporaires
     
     void printStack(Pile *p);
     void push(Pile *p, char x[]);
@@ -37,7 +34,6 @@
     int compatibilityTest(Pile *_pile);
 
     Pile _compatible = NULL;
-    
 %}
 
 %union{
@@ -123,7 +119,6 @@ Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}
 
 Instruction : Affectation Instruction {}
             | When Instruction               {}
-            | IF Instruction                 {}
             | While Instruction              {}
             | Expression MC_SEMI Instruction {}
             |
@@ -164,7 +159,7 @@ Affectation: BBB Expression MC_SEMI{
             i++;
         } 
     }
-    /* Mettre a jour le quadreplet de resultats final de l'expression*/
+    /* Mettre a jour le quadreplet de resultats final de l expression*/
     updateQuadreplet(quadAffectNum,1,temporaryName);
     printStack(&evaluer);
 }
@@ -178,52 +173,34 @@ BBB: MC_IDF MC_AFFECT{
     push(&_compatible,type);
 
     if(routinIdfDeclar($1) == 0){
-        printf("\n ERREUR IDF %s NON DECLAREE ! \n",$1); 
+        printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
     }else{
-       printf("type de %s est %s\n",$1, getType($1));
        quadAffectNum = qc; //le num de quad courant
        insertQuadreplet(":=","","",$1);
-       strcpy(typeGauche,type);
     }
 }
 ;
 
-Expression : Expression MC_ADD{push(&_pile,"+");} T{
-    isFisrtTime=0;
-    //insertQuadreplet("+",op1,op2,"t1");
-    /* updateQuadreplet(quadAffectNum,1,"t1"); */
-}
-           | Expression MC_SUB{{push(&_pile,"-");}} T
+Expression : Expression MC_ADD{push(&_pile,"+");} T{}
+           | Expression MC_SUB{push(&_pile,"-");} T
            | T
 ;
 T: T MC_MUL{push(&_pile,"*");} F
- | T MC_DIV{push(&_pile,"/");} F{}
+ | T MC_DIV{push(&_pile,"/");} F{
+     printf("DIVISON: \n");
+ }
  | F
 ;
 F:MC_IDF {
     char *type = getType($1);
     push(&_compatible,type);
-     if(routinIdfDeclar($1) == 0) 
-        {        
-            printf("\n ERREUR IDF %s NON DECLAREE ! \n \n",$1); 
-        }else{
+    if(routinIdfDeclar($1) == 0){        
+            printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
+    }else{
             char *str = strdup($1);
             push(&_pile,str);
     }
-    /*
-    char *type = getType($1);
-    printf("Type %s - %s\n",$1,type); 
-    if(isFisrtTime == 0){
-         strcpy(typeDroite,type);
-         strcpy(op1,strdup($1));
-         isFisrtTime=1;
-     }else{
-         if(strcmp(typeDroite,type) == 0){
-             printf("Type incompatible\n");
-         }
-         strcpy(op2,$1);
-     } */
-    }
+}
  | Value
  | L_PAREN Expression R_PAREN {}
  
@@ -235,9 +212,6 @@ Value:INTEGER_CONST {
     asprintf(&s, "%i", $1);
     push(&_pile,s);
     push(&_compatible,"INTEGER");
-    if(quadNumber != 0){
-        //updateQuadreplet(quadNumber,1,s);
-    }
     free(s);
 }
 |REAL_CONST {
@@ -245,10 +219,6 @@ Value:INTEGER_CONST {
     asprintf(&s, "%f", $1);
     push(&_pile,s);
     push(&_compatible,"REAL");
-
-    if(quadNumber != 0){
-        //updateQuadreplet(quadNumber,1,s);
-    }
     free(s);
 
 }
@@ -257,7 +227,6 @@ Value:INTEGER_CONST {
     asprintf(&s, "%s", $1); 
     push(&_pile,s);
     push(&_compatible,"STRING");
-
     free(s);
     }
 |CHAR_CONST {
@@ -301,14 +270,6 @@ X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI
 |
 ;
 
-IF:B Condition R_PAREN{};
-B:C L_PAREN {}
-;
-
-C: D Instruction MC_IF {};
-D:MC_EXECUTE {/*aller a l'evaluation de la condition       // insererQUADR("BR","","","");*/}
-
-
 /*------------- While ( Condition )Faire  <Instructions> Fait; -------*/
 
 While:AA R_BRACE MC_SEMI {}
@@ -336,7 +297,7 @@ void yyerror(char *s) {
      else{ 
             yyparse();
             afficher();
-            afficherDecl();
+            afficherDecl(); // table pour verifier les declarations
             printQuadreplet();
      }
       return 0;
