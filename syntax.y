@@ -26,6 +26,7 @@
     int quadAffectNum = 0;                           // Pour garder le quadreplet de debut de une affectation
     int i = 0;                                       // Pour generer des noms temporaires
     int hasCompilingErrors = 0;                      // Pour verifier les errors de compilation en fin du Programme
+    char *temporaryName="";                          // This will keep the latest generated temporary name
 
     void printStack(Pile *p);
     void push(Pile *p, char x[]);
@@ -35,6 +36,10 @@
     int compatibilityTest(Pile *_pile);
 
     Pile _compatible = NULL;
+
+    /* Variables pour le WHEN   */
+    int sauvBZ = 0;
+    int sauvBR = 0;
 %}
 
 %union{
@@ -67,7 +72,7 @@
 %%
 S:MC_CODE MC_IDF Declaration MC_START Instruction MC_END MC_DOT{
       if(hasCompilingErrors == 0){
-          printf("\n --- Votre Programme a compilé correct --- \n");
+          printf("\n --- Votre Programme a compilé avec %d error(s) --- \n",hasCompilingErrors);
       }else{
           printf("\n --- Votre Programme a compilé avec %d errors --- \n", hasCompilingErrors);
       }
@@ -146,7 +151,7 @@ Affectation: BBB Expression MC_SEMI{
     char *T[size];
     
     char *x="";
-    char *temporaryName="";
+    // char *temporaryName="";
     while (!pileVide(temp))
     {
         x=pop(&temp);
@@ -186,9 +191,9 @@ BBB: MC_IDF MC_AFFECT{
 }
 ;
 
-Expression : Expression MC_ADD{push(&_pile,"+");} T{}
-           | Expression MC_SUB{push(&_pile,"-");} T
-           | T
+Expression : Expression MC_ADD{push(&_pile,"+");} T {}
+           | Expression MC_SUB{push(&_pile,"-");} T {}
+           | T {}
 ;
 T: T MC_MUL{push(&_pile,"*");} F
  | T MC_DIV{push(&_pile,"/");} F{/*tester la division par 0*/}
@@ -206,7 +211,7 @@ F:MC_IDF {
     }
 }
  | Value
- | L_PAREN Expression R_PAREN {}
+ | L_PAREN Expression R_PAREN 
  
 ;
 
@@ -243,29 +248,55 @@ Value:INTEGER_CONST {
 ;
 
 
-OP_COND: MC_SUP_EQUAL{push(&_pile,"G");}    
-       | MC_INF_EQUAL{push(&_pile,"L");}    
-       | MC_STRICT_SUP{push(&_pile,">");}   
-       | MC_STRICT_INF{push(&_pile,"<");}   
-       | MC_EQUAL{push(&_pile,"=");}       
-       | MC_NOT_EQUAL{push(&_pile,"!");}    
+OP_COND: MC_SUP_EQUAL           {push(&_pile,"G");}    
+       | MC_INF_EQUAL           {push(&_pile,"L");}    
+       | MC_STRICT_SUP          {push(&_pile,">");}   
+       | MC_STRICT_INF          {push(&_pile,"<");}   
+       | MC_EQUAL               {push(&_pile,"=");}       
+       | MC_NOT_EQUAL           {push(&_pile,"!");}    
 ;
 
 
-Condition:Expression OP_COND Expression{
+Condition:Expression{
+    printStack(&_pile);
+    //printStack(&_compatible);
+} OP_COND Expression{
+    //printStack(&_pile);
+    //printStack(&_compatible);
 } 
 ;
 
 
-/*------------- EXECUTE | <Instructions> |IF | <Condition> |-------*/
+/*---WHEN(<condition>)DO{<Instruction>}OTHERWISE{ <Instruction> }; --*/
 
 When: MC_WHEN L_PAREN Condition {
-    insertQuadreplet("BZ","","","");
-    printf("qc= %i - quadNumber= %i \n",qc,quadNumber);
-} R_PAREN MC_DO L_BRACE Instruction R_BRACE X2
+    //A
+    sauvBZ = qc;
+    insertQuadreplet("BZ","","",temporaryName);
+} R_PAREN MC_DO L_BRACE Instruction{
+    //B
+    sauvBR=qc;
+    char *s; 
+    asprintf(&s, "%i", qc); 
+    insertQuadreplet("BR","","","");
+    updateQuadreplet(sauvBZ,1,s);
+    free(s);
+} R_BRACE X2
 ; 
-X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI
-| MC_SEMI
+X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI{
+    //C
+    char *s; 
+    asprintf(&s, "%i", qc); 
+    updateQuadreplet(sauvBR,1,s);
+    free(s);
+}
+| MC_SEMI{
+    //C
+    char *s; 
+    asprintf(&s, "%i", qc); 
+    updateQuadreplet(sauvBR,1,s);
+    free(s);
+}
 |
 ;
 
