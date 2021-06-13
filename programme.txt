@@ -2,7 +2,8 @@ CODE Programme
 REAL M,X,A,B,V,C,D;
 STRING L;
 START
-    WHEN((X+D) > (A/B))DO{
-        V := M * D;
+
+    WHEN(A + B > V *B))DO{
+        
     };
 END.

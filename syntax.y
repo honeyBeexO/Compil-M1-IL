@@ -34,12 +34,59 @@
     void toPostfix(Pile *_expression, Pile *_result);
     char *generateTemporaryName(int number);
     int compatibilityTest(Pile *_pile);
+    int getSize(Pile *p);
 
     Pile _compatible = NULL;
 
     /* Variables pour le WHEN   */
     int sauvBZ = 0;
     int sauvBR = 0;
+
+
+
+    void evaluateExpression()
+{
+    //Evaluer la compatibilite de l'expression
+    if(!compatibilityTest(&_compatible)){
+        hasCompilingErrors++;
+        printf("ERROR DE COMPATIBILITÉ LIGNE -> %d:%d\n",lineNumber,columnNumber);
+    }
+    //Evaluer les quad de la pille
+    toPostfix(&_pile,&_postFixed);
+
+    Pile evaluer = NULL;
+    Pile temp = _postFixed;
+
+    int size = getSize(&_postFixed);
+    char *T[size];
+    
+    char *x="";
+    // char *temporaryName="";
+    if(size == 1){
+        x=pop(&temp);
+        updateQuadreplet(quadAffectNum,1,x);
+        return;
+    }
+    while (!pileVide(temp))
+    {
+        x=pop(&temp);
+        if(isOperator(x[0])==0){
+            //Operande
+            push(&evaluer,x);
+        }else{
+            //Operateur
+            op1 = pop(&evaluer);
+            op2 = pop(&evaluer);
+            // result = Operation(op1,op2,x);
+            temporaryName = generateTemporaryName(i); // generate temporaire name
+            push(&evaluer,temporaryName);
+            insertQuadreplet(x,op1,op2,temporaryName);
+            i++;
+        } 
+    }
+    /* Mettre a jour le quadreplet de resultats final de l expression*/
+    updateQuadreplet(quadAffectNum,1,temporaryName);
+}
 %}
 
 %union{
@@ -136,41 +183,7 @@ Instruction : Affectation Instruction {}
 
 
 Affectation: BBB Expression MC_SEMI{
-    //Evaluer la compatibilite de l'expression
-    if(!compatibilityTest(&_compatible)){
-        hasCompilingErrors++;
-        printf("ERROR DE COMPATIBILITÉ LIGNE -> %d:%d\n",lineNumber,columnNumber);
-    }
-    //Evaluer les quad de la pille
-    toPostfix(&_pile,&_postFixed);
-
-    Pile evaluer = NULL;
-    Pile temp = _postFixed;
-
-    int size = getSize(&_postFixed);
-    char *T[size];
-    
-    char *x="";
-    // char *temporaryName="";
-    while (!pileVide(temp))
-    {
-        x=pop(&temp);
-        if(isOperator(x[0])==0){
-            //Operande
-            push(&evaluer,x);
-        }else{
-            //Operateur
-            op1 = pop(&evaluer);
-            op2 = pop(&evaluer);
-            // result = Operation(op1,op2,x);
-            temporaryName = generateTemporaryName(i); // generate temporaire name
-            push(&evaluer,temporaryName);
-            insertQuadreplet(x,op1,op2,temporaryName);
-            i++;
-        } 
-    }
-    /* Mettre a jour le quadreplet de resultats final de l expression*/
-    updateQuadreplet(quadAffectNum,1,temporaryName);
+    evaluateExpression();
 }
 ;
 BBB: MC_IDF MC_AFFECT{
@@ -258,20 +271,26 @@ OP_COND: MC_SUP_EQUAL           {push(&_pile,"G");}
 
 
 Condition:Expression{
-    printStack(&_pile);
-    //printStack(&_compatible);
+    // Garder le tomporaire
+    /* quadAffectNum = qc; //le num de quad courant
+    insertQuadreplet(":=","","","tempC"); */
+    evaluateExpression();
+    _pile=NULL; _postFixed=NULL; _compatible=NULL;
+
 } OP_COND Expression{
-    //printStack(&_pile);
-    //printStack(&_compatible);
+    // Evaluer l'expression de la partie gauche 
+    // Garder le tomporaire
+    evaluateExpression();
 } 
 ;
 
 
 /*---WHEN(<condition>)DO{<Instruction>}OTHERWISE{ <Instruction> }; --*/
 
-When: MC_WHEN L_PAREN Condition {
+When: MC_WHEN{ _pile=NULL;_postFixed=NULL;_compatible=NULL; } L_PAREN Condition {
     //A
     sauvBZ = qc;
+    //quadAffectNum = qc; //le num de quad courant
     insertQuadreplet("BZ","","",temporaryName);
 } R_PAREN MC_DO L_BRACE Instruction{
     //B
