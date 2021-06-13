@@ -3,7 +3,8 @@ REAL M,X,A,B,V,C,D;
 STRING L;
 START
 
-    WHEN(A + B > V *B))DO{
-        
+    WHILE(A + B > C*D)EXECUTE{
+        X:=V+L;
+        X:=V/0;
     };
 END.

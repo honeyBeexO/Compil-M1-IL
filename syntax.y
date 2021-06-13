@@ -27,6 +27,8 @@
     int i = 0;                                       // Pour generer des noms temporaires
     int hasCompilingErrors = 0;                      // Pour verifier les errors de compilation en fin du Programme
     char *temporaryName="";                          // This will keep the latest generated temporary name
+    int quadCondNum = 0;
+    int isAffectation = 0;
 
     void printStack(Pile *p);
     void push(Pile *p, char x[]);
@@ -44,8 +46,7 @@
 
 
 
-    void evaluateExpression()
-{
+void evaluateExpression(){
     //Evaluer la compatibilite de l'expression
     if(!compatibilityTest(&_compatible)){
         hasCompilingErrors++;
@@ -62,9 +63,14 @@
     
     char *x="";
     // char *temporaryName="";
-    if(size == 1){
+    if(size == 1 && isAffectation){
         x=pop(&temp);
         updateQuadreplet(quadAffectNum,1,x);
+        return;
+    }
+    if(size == 1 && !isAffectation){
+        x=pop(&temp);
+        updateQuadreplet(quadCondNum,1,x);
         return;
     }
     while (!pileVide(temp))
@@ -78,6 +84,9 @@
             op1 = pop(&evaluer);
             op2 = pop(&evaluer);
             // result = Operation(op1,op2,x);
+            if(strcmp(x,"/")==0 && strcmp(op2,"0")==0){
+                printf("Division par zero ERROR ligne %d - %d\n", lineNumber,columnNumber);
+            }
             temporaryName = generateTemporaryName(i); // generate temporaire name
             push(&evaluer,temporaryName);
             insertQuadreplet(x,op1,op2,temporaryName);
@@ -85,7 +94,11 @@
         } 
     }
     /* Mettre a jour le quadreplet de resultats final de l expression*/
-    updateQuadreplet(quadAffectNum,1,temporaryName);
+   if(isAffectation){
+        updateQuadreplet(quadAffectNum,1,temporaryName);
+   }/*else{
+        updateQuadreplet(quadCondNum,1,temporaryName);
+   } */
 }
 %}
 
@@ -184,12 +197,15 @@ Instruction : Affectation Instruction {}
 
 Affectation: BBB Expression MC_SEMI{
     evaluateExpression();
+    isAffectation = 0;
 }
 ;
 BBB: MC_IDF MC_AFFECT{
     _pile=NULL;
     _postFixed=NULL;
     _compatible=NULL;
+
+    isAffectation = 1;
 
     char *type = getType($1);
     push(&_compatible,type);
@@ -209,7 +225,9 @@ Expression : Expression MC_ADD{push(&_pile,"+");} T {}
            | T {}
 ;
 T: T MC_MUL{push(&_pile,"*");} F
- | T MC_DIV{push(&_pile,"/");} F{/*tester la division par 0*/}
+ | T MC_DIV{push(&_pile,"/");} F{
+     /*tester la division par 0*/
+     }
  | F
 ;
 F:MC_IDF {
@@ -274,12 +292,14 @@ Condition:Expression{
     // Garder le tomporaire
     /* quadAffectNum = qc; //le num de quad courant
     insertQuadreplet(":=","","","tempC"); */
-    evaluateExpression();
-    _pile=NULL; _postFixed=NULL; _compatible=NULL;
+    //evaluateExpression();
+    //_pile=NULL; _postFixed=NULL; _compatible=NULL;
 
 } OP_COND Expression{
     // Evaluer l'expression de la partie gauche 
     // Garder le tomporaire
+    quadCondNum = qc;
+    //insertQuadreplet("","","","");
     evaluateExpression();
 } 
 ;
@@ -287,16 +307,17 @@ Condition:Expression{
 
 /*---WHEN(<condition>)DO{<Instruction>}OTHERWISE{ <Instruction> }; --*/
 
-When: MC_WHEN{ _pile=NULL;_postFixed=NULL;_compatible=NULL; } L_PAREN Condition {
+When: MC_WHEN{ _pile=NULL;_postFixed=NULL;_compatible=NULL; isAffectation=0; } L_PAREN Condition {
     //A
     sauvBZ = qc;
-    //quadAffectNum = qc; //le num de quad courant
+    quadAffectNum = qc; //le num de quad courant
     insertQuadreplet("BZ","","",temporaryName);
-} R_PAREN MC_DO L_BRACE Instruction{
+} R_PAREN{
+} MC_DO L_BRACE Instruction{
     //B
     sauvBR=qc;
     char *s; 
-    asprintf(&s, "%i", qc); 
+    asprintf(&s, "%i", qc+1); 
     insertQuadreplet("BR","","","");
     updateQuadreplet(sauvBZ,1,s);
     free(s);
@@ -321,15 +342,34 @@ X2: MC_OTHERWISE L_BRACE Instruction R_BRACE MC_SEMI{
 
 /*------------- While ( Condition )Faire  <Instructions> Fait; -------*/
 
-While:AA R_BRACE MC_SEMI {}
+While:AA R_BRACE MC_SEMI {
+        //C
+    char *s; 
+    asprintf(&s, "%i", qc); 
+    updateQuadreplet(sauvBR,1,s);
+    free(s);
+}
 ;
-AA:BB R_PAREN MC_EXECUTE L_BRACE Instruction {}
+AA:BB R_PAREN MC_EXECUTE L_BRACE Instruction {
+        //B
+    sauvBR=qc;
+    char *s; 
+    asprintf(&s, "%i", qc+1); 
+    insertQuadreplet("BR","","","");
+    updateQuadreplet(sauvBZ,1,s);
+    free(s);
+}
 ;
 
-BB:CC Condition {}
+BB:CC Condition {
+        //A
+    sauvBZ = qc;
+    quadAffectNum = qc; //le num de quad courant
+    insertQuadreplet("BZ","","",temporaryName);
+}
 ;
 
-CC:MC_WHILE L_PAREN {}
+CC:MC_WHILE{ _pile=NULL;_postFixed=NULL;_compatible=NULL; isAffectation=0; } L_PAREN {}
 
 
 %%

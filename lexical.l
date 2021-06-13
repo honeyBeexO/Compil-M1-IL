@@ -20,65 +20,71 @@ CHAR_CONST \'({alpha}|{digit})'
 IDF [A-Z]+({alpha}|{digit}){0,19}
 %%
 
-"CODE" {return MC_CODE;}
-"START" {return MC_START;}
-"END" {return MC_END;}
+"CODE" {columnNumber+=yyleng; return MC_CODE; }
+"START" {columnNumber+=yyleng; return MC_START; }
+"END" {columnNumber+=yyleng; return MC_END; }
 
-"INTEGER"|"integer"    {
+"INTEGER"    {
       yylval.str = strdup(yytext); 
+      columnNumber+=yyleng;
       return MC_INTEGER;
       }
-"REAL"|"real"  {
-      if(strlen(yytext)>20) printf("IDF too long\n");
+"REAL"  {
+      columnNumber+=yyleng;
+      if(strlen(yytext)>20) 
+            printf("IDF too long\n");
       yylval.str = strdup(yytext); 
       return MC_REAL;
       }
-"STRING"|"string" {yylval.str = strdup(yytext);return MC_STRING;}
-"CHAR" {yylval.str = strdup(yytext);return MC_CHAR;}
+"STRING" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_STRING; }
+"CHAR" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_CHAR;}
 
 "CONST" {
+      columnNumber+=yyleng;
       yylval.str = strdup(yytext); 
       return MC_CONST; 
       }
 
 
 "WHILE" {
+      columnNumber+=yyleng;
       yylval.str = strdup(yytext);
       return MC_WHILE;
       }
-"EXECUTE" {yylval.str = strdup(yytext);return MC_EXECUTE;}
+"EXECUTE" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_EXECUTE;}
 
 
-"WHEN" {yylval.str = strdup(yytext);return MC_WHEN;}
-"DO"|"do" {yylval.str = strdup(yytext);return MC_DO;}
-"OTHERWISE" {yylval.str = strdup(yytext);return MC_OTHERWISE;}
-"PROD" {yylval.str = strdup(yytext);return MC_PROD;}
+"WHEN" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_WHEN;}
+"DO"|"do" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_DO;}
+"OTHERWISE" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_OTHERWISE;}
+"PROD" {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_PROD;}
 
-"+"      {yylval.str = strdup(yytext); return MC_ADD;}
-"-"      {yylval.str = strdup(yytext); return MC_SUB; }
-"*"    {yylval.str = strdup(yytext); return MC_MUL; }
-"/"     {yylval.str = strdup(yytext);  return MC_DIV; }
+"+"      {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_ADD;}
+"-"      {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_SUB; }
+"*"    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_MUL; }
+"/"     {columnNumber+=yyleng; yylval.str = strdup(yytext);  return MC_DIV; }
 
-"=="  {yylval.str = strdup(yytext);return MC_EQUAL;}
-"!="    {yylval.str = strdup(yytext); return MC_NOT_EQUAL;}
-">"      {yylval.str = strdup(yytext); return MC_STRICT_SUP; }
-"<"    {yylval.str = strdup(yytext); return MC_STRICT_INF;}
-">="    {yylval.str = strdup(yytext); return MC_SUP_EQUAL;}
-"<="      {yylval.str = strdup(yytext); return MC_INF_EQUAL; }
+"=="  {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_EQUAL;}
+"!="    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_NOT_EQUAL;}
+">"      {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_STRICT_SUP; }
+"<"    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_STRICT_INF;}
+">="    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_SUP_EQUAL;}
+"<="      {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_INF_EQUAL; }
 
 
-"("      {  return L_PAREN;}
-")"      {  return R_PAREN; }
-"{"      {  return L_BRACE;}
-"}"      {  return R_BRACE;}
+"("      { columnNumber+=yyleng; return L_PAREN;}
+")"      { columnNumber+=yyleng; return R_PAREN; }
+"{"      {columnNumber+=yyleng;  return L_BRACE;}
+"}"      { columnNumber+=yyleng; return R_BRACE;}
 
-";"      {  return MC_SEMI;}
-","      {  return MC_COMMA;}
-":="     {  return MC_AFFECT;}
-":"     {  return MC_DP;}
-"."     {  return MC_DOT;}
+";"      { columnNumber+=yyleng; return MC_SEMI;}
+","      { columnNumber+=yyleng; return MC_COMMA;}
+":="     {columnNumber+=yyleng;  return MC_AFFECT;}
+":"     { columnNumber+=yyleng; return MC_DP;}
+"."     { columnNumber+=yyleng; return MC_DOT;}
 
 {INTEGER_CONST} {
+      columnNumber+=yyleng;
       int valid_int = atoi(yytext);
       if(yyleng>6){
             printf(":entier trop long\n");
@@ -94,20 +100,24 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
       }
 
 {REAL_CONST}  {
+      columnNumber+=yyleng;
       yylval.real = atof(yytext); 
       return REAL_CONST; 
       }
 
 {STRING_CONST} {
+      columnNumber+=yyleng;
        yylval.str = strdup(yytext);
       return STRING_CONST; 
       }
 {CHAR_CONST} {
+      columnNumber+=yyleng;
        yylval.myChar = strdup(yytext)[0];
       return CHAR_CONST; 
       }
 
 {IDF} {
+      columnNumber+=yyleng;
       if(strlen(yytext)<20){
             yylval.str = strdup(yytext); 
             inserer(yytext,"IDF", hachage(yytext));
@@ -117,9 +127,9 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
       }
 }
 
-[ \t]
-[ \t\r\f]+ /* eat up whitespace */
-\n lineNumber++;
+[ \t] columnNumber+=yyleng;
+[ \t\r\f]+ columnNumber+=yyleng;/* eat up whitespace */
+\n {lineNumber++; columnNumber=0;}
 . { printf("Error Lexical a la ligne: %d\n",lineNumber);
     yyterminate();
 }
