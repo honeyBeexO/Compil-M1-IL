@@ -153,7 +153,8 @@ Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
         inserIdfDecl($2);
         insererType($2,"Constante","Const",1);
     }else{
-        printf("ERROR: Double declaration DE CONSTANTE %s\n",$2);
+        hasCompilingErrors++;
+        printf("ERROR: Double declaration de CONSTANTE %s ligne: %d - %d\n",$2,lineNumber,columnNumber);
     }
 }
 ;
@@ -165,7 +166,8 @@ list_idf: MC_IDF {
         /* empiler($1); */
         insererType($1,sauvType,"Variable",1);
     }else{
-        printf("ERROR: Double declaration\n");
+        hasCompilingErrors++;
+        printf("ERROR: Double declaration de %s ligne: %d - %d\n",$1,lineNumber,columnNumber);
     }
 }
         |  MC_IDF MC_COMMA {
@@ -174,7 +176,8 @@ list_idf: MC_IDF {
         /* empiler($1); */
         insererType($1,sauvType,"Variable",1);
     }else{
-        printf("ERROR: Double declaration\n");
+        hasCompilingErrors++;
+        printf("ERROR: Double declaration de %s ligne: %d - %d\n",$1,lineNumber,columnNumber);
     }
 } list_idf {}
 ;
@@ -185,7 +188,9 @@ Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}
     | MC_CHAR           {strcpy(sauvType,"CHAR");}
 ;
 
-
+Prod: MC_PROD{} L_PAREN list_expression R_PAREN
+list_expression: Expression
+                | list_expression MC_SEMI{push(&_pile,"*");} Expression
 
 Instruction : Affectation Instruction {}
             | When Instruction               {}
@@ -195,10 +200,7 @@ Instruction : Affectation Instruction {}
 ;
 
 
-Affectation: BBB Expression MC_SEMI{
-    evaluateExpression();
-    isAffectation = 0;
-}
+Affectation: BBB Expression MC_SEMI{evaluateExpression();isAffectation = 0;}
 ;
 BBB: MC_IDF MC_AFFECT{
     _pile=NULL;
@@ -222,6 +224,7 @@ BBB: MC_IDF MC_AFFECT{
 
 Expression : Expression MC_ADD{push(&_pile,"+");} T {}
            | Expression MC_SUB{push(&_pile,"-");} T {}
+           | Prod
            | T {}
 ;
 T: T MC_MUL{push(&_pile,"*");} F

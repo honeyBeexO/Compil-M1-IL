@@ -1,10 +1,8 @@
 CODE Programme
 REAL M,X,A,B,V,C,D;
 STRING L;
+INTEGER L;
 START
 
-    WHILE(A + B > C*D)EXECUTE{
-        X:=V+L;
-        X:=V/0;
-    };
+M := PROD(A+B*C;C/D);
 END.
