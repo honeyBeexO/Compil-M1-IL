@@ -215,10 +215,13 @@ BBB: MC_IDF MC_AFFECT{
     if(routinIdfDeclar($1) == 0){
         hasCompilingErrors++;
         printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
-    }else{
+    }
+    /* else{
        quadAffectNum = qc; //le num de quad courant
        insertQuadreplet(":=","","",$1);
-    }
+    } */
+    quadAffectNum = qc; //le num de quad courant
+    insertQuadreplet(":=","","",$1);
 }
 ;
 
@@ -379,7 +382,7 @@ void yyerror(char *s) {
      else{ 
             yyparse();
             afficher();
-            afficherDecl(); // table pour verifier les declarations
+            //afficherDecl(); // table pour verifier les declarations
             printQuadreplet();
      }
       return 0;
