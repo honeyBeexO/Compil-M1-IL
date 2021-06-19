@@ -221,5 +221,6 @@ extern int compatibilityTest(Pile *_pile)
     {
         return 1; // compatible
     }
+    printf("%s non compatible avec %s\t", previous, sommetPile(temp));
     return 0;
 }

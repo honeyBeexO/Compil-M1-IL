@@ -1,13 +1,18 @@
-CODE Programme
-REAL M,X,A,B,V,C,D;
-STRING L;
+CODE Tpcompil
+$ Partie déclaration $
+INTEGER X, Y, Z, W ;
+REAL A, B ;
+CHAR N ;
+STRING MAX ;
+CONST INTEGER Min = 5 ;
 START
-WHEN(A > B)DO{
-    A := B / 2;
-}OTHERWISE{
-    A:= B * 3;
-};
-WHILE(X >= B)EXECUTE{
-    M := PROD(A+B*C;C/D);
+$ Partie instruction $
+WHEN (X > Y)DO {
+    W := PROD (X+Y, Z*Y);
+    }OTHERWISE{ 
+        WHILE (A == B)EXECUTE {
+            A := B+(-3.5) ;
+            MAX := N;
+    };
 };
 END.

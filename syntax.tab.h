@@ -67,16 +67,17 @@
      MC_INF_EQUAL = 283,
      MC_NOT_EQUAL = 284,
      MC_EQUAL = 285,
-     INTEGER_CONST = 286,
-     REAL_CONST = 287,
-     STRING_CONST = 288,
-     CHAR_CONST = 289,
-     MC_WHILE = 290,
-     MC_WHEN = 291,
-     MC_PROD = 292,
-     MC_EXECUTE = 293,
-     MC_DO = 294,
-     MC_OTHERWISE = 295
+     MC_EQUAL_S = 286,
+     INTEGER_CONST = 287,
+     REAL_CONST = 288,
+     STRING_CONST = 289,
+     CHAR_CONST = 290,
+     MC_WHILE = 291,
+     MC_WHEN = 292,
+     MC_PROD = 293,
+     MC_EXECUTE = 294,
+     MC_DO = 295,
+     MC_OTHERWISE = 296
    };
 #endif
 /* Tokens.  */
@@ -108,16 +109,17 @@
 #define MC_INF_EQUAL 283
 #define MC_NOT_EQUAL 284
 #define MC_EQUAL 285
-#define INTEGER_CONST 286
-#define REAL_CONST 287
-#define STRING_CONST 288
-#define CHAR_CONST 289
-#define MC_WHILE 290
-#define MC_WHEN 291
-#define MC_PROD 292
-#define MC_EXECUTE 293
-#define MC_DO 294
-#define MC_OTHERWISE 295
+#define MC_EQUAL_S 286
+#define INTEGER_CONST 287
+#define REAL_CONST 288
+#define STRING_CONST 289
+#define CHAR_CONST 290
+#define MC_WHILE 291
+#define MC_WHEN 292
+#define MC_PROD 293
+#define MC_EXECUTE 294
+#define MC_DO 295
+#define MC_OTHERWISE 296
 
 
 
@@ -132,7 +134,7 @@ typedef union YYSTYPE
         char myChar;
 }
 /* Line 1529 of yacc.c.  */
-#line 136 "syntax.tab.h"
+#line 138 "syntax.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

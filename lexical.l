@@ -18,6 +18,8 @@ REAL_CONST      [-+]?("0"|{digit}*"."{digit}+)
 STRING_CONST      \"{print}*\"
 CHAR_CONST \'({alpha}|{digit})'
 IDF [A-Z]+({alpha}|{digit}){0,19}
+%x MY_COMMENT
+
 %%
 
 "CODE" {columnNumber+=yyleng; return MC_CODE; }
@@ -65,6 +67,7 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 "/"     {columnNumber+=yyleng; yylval.str = strdup(yytext);  return MC_DIV; }
 
 "=="  {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_EQUAL;}
+"="  {columnNumber+=yyleng; yylval.str = strdup(yytext);return MC_EQUAL_S;}
 "!="    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_NOT_EQUAL;}
 ">"      {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_STRICT_SUP; }
 "<"    {columnNumber+=yyleng; yylval.str = strdup(yytext); return MC_STRICT_INF;}
@@ -130,8 +133,22 @@ IDF [A-Z]+({alpha}|{digit}){0,19}
 [ \t] columnNumber+=yyleng;
 [ \t\r\f]+ columnNumber+=yyleng;/* eat up whitespace */
 \n {lineNumber++; columnNumber=0;}
-. { printf("Error Lexical a la ligne: %d\n",lineNumber);
-    yyterminate();
+"$" { 
+      printf("ignorer les commentaires de ligne %d ", lineNumber); 
+      BEGIN(MY_COMMENT); 
+}
+
+<MY_COMMENT>"$" { 
+      printf("a ligne %d\n", lineNumber); 
+      BEGIN(INITIAL); 
+}
+<MY_COMMENT>[ -~] {/* SAUTER N'IMPORT QUELLE CARACTERE */}
+
+<MY_COMMENT>"\n" { lineNumber++; }
+
+. { 
+      printf("Error Lexical causé par --> [%s] a la ligne %d:%d \n",yytext,lineNumber, columnNumber);
+      yyterminate();
 }
 %%
 void ret_print(char *token_type){

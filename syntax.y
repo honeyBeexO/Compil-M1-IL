@@ -25,7 +25,7 @@
 
     int quadAffectNum = 0;                           // Pour garder le quadreplet de debut de une affectation
     int i = 0;                                       // Pour generer des noms temporaires
-    int hasCompilingErrors = 0;                      // Pour verifier les errors de compilation en fin du Programme
+    extern int hasCompilingErrors = 0;                      // Pour verifier les errors de compilation en fin du Programme
     char *temporaryName="";                          // This will keep the latest generated temporary name
     int quadCondNum = 0;
     int isAffectation = 0;
@@ -122,7 +122,7 @@ void evaluateExpression(){
 %token <str>MC_ADD <str>MC_SUB <str>MC_MUL <str>MC_DIV
 
 %token <str>MC_STRICT_SUP <str>MC_STRICT_INF <str>MC_SUP_EQUAL <str>MC_INF_EQUAL 
-<str>MC_NOT_EQUAL <str>MC_EQUAL
+<str>MC_NOT_EQUAL <str>MC_EQUAL <str>MC_EQUAL_S
 
 %token <integer>INTEGER_CONST <real>REAL_CONST <str>STRING_CONST <myChar>CHAR_CONST
 
@@ -148,13 +148,13 @@ Declaration: Variable Declaration
 Variable:Type list_idf MC_SEMI 
 ;
 
-Constante:MC_CONST MC_IDF MC_AFFECT Value MC_SEMI{
-     if(doubleDeclaration($2) == 0){
-        inserIdfDecl($2);
-        insererType($2,"Constante","Const",1);
+Constante:MC_CONST Type MC_IDF MC_EQUAL_S Value MC_SEMI{
+     if(doubleDeclaration($3) == 0){
+        inserIdfDecl($3);
+        insererType($3,"Constante","CONST",1);
     }else{
         hasCompilingErrors++;
-        printf("ERROR: Double declaration de CONSTANTE %s ligne: %d - %d\n",$2,lineNumber,columnNumber);
+        printf("ERROR: Double declaration de CONSTANTE %s ligne: %d - %d\n",$3,lineNumber,columnNumber);
     }
 }
 ;
@@ -190,7 +190,7 @@ Type: MC_INTEGER        {strcpy(sauvType,"INTEGER");}
 
 Prod: MC_PROD{} L_PAREN list_expression R_PAREN
 list_expression: Expression
-                | list_expression MC_SEMI{push(&_pile,"*");} Expression
+                | list_expression MC_COMMA{push(&_pile,"*");} Expression
 
 Instruction : Affectation Instruction {}
             | When Instruction               {}
@@ -228,9 +228,7 @@ Expression : Expression MC_ADD{push(&_pile,"+");} T {}
            | T {}
 ;
 T: T MC_MUL{push(&_pile,"*");} F
- | T MC_DIV{push(&_pile,"/");} F{
-     /*tester la division par 0*/
-     }
+ | T MC_DIV{push(&_pile,"/");} F{}
  | F
 ;
 F:MC_IDF {
@@ -291,18 +289,10 @@ OP_COND: MC_SUP_EQUAL           {push(&_pile,"G");}
 ;
 
 
-Condition:Expression{
-    // Garder le tomporaire
-    /* quadAffectNum = qc; //le num de quad courant
-    insertQuadreplet(":=","","","tempC"); */
-    //evaluateExpression();
-    //_pile=NULL; _postFixed=NULL; _compatible=NULL;
-
-} OP_COND Expression{
+Condition:Expression OP_COND Expression{
     // Evaluer l'expression de la partie gauche 
     // Garder le tomporaire
     quadCondNum = qc;
-    //insertQuadreplet("","","","");
     evaluateExpression();
 } 
 ;
@@ -385,7 +375,7 @@ void yyerror(char *s) {
      initialize();
      yyin = fopen( "programme.txt", "r" );
     if (yyin==NULL) 
-            printf("ERROR  \n");
+            printf("ERROR Lors de l'ouverture de fichier... \n");
      else{ 
             yyparse();
             afficher();
