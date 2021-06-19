@@ -240,10 +240,13 @@ F:MC_IDF {
     if(routinIdfDeclar($1) == 0){        
             hasCompilingErrors++;
             printf("\n ERREUR IDF %s NON DECLAREE -> %d:%d\n",$1,lineNumber,columnNumber); 
-    }else{
+    }
+    /* else{
             char *str = strdup($1);
             push(&_pile,str);
-    }
+    } */
+    char *str = strdup($1);
+    push(&_pile,str);
 }
  | Value
  | L_PAREN Expression R_PAREN 
@@ -374,9 +377,9 @@ CC:MC_WHILE{ _pile=NULL;_postFixed=NULL;_compatible=NULL; isAffectation=0; } L_P
 void yyerror(char *s) {
    fprintf(stderr, "%s\n", s);
 }
- int main(int argc,char **argv){
+ int main(int argc,char *argv[]){
      initialize();
-     yyin = fopen( "programme.txt", "r" );
+     yyin = fopen(argv[1], "r" );
     if (yyin==NULL) 
             printf("ERROR Lors de l'ouverture de fichier... \n");
      else{ 
